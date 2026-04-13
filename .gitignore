@@ -47,3 +47,17 @@ yarn-error.log*
 
 # ---- Deploy ------------------------------------------------------------------
 .vercel
+.claude/settings.json
+.claude/skills/debug-issue.md
+.claude/skills/explore-codebase.md
+.claude/skills/refactor-safely.md
+.claude/skills/review-changes.md
+.gitignore
+.cursor/mcp.json
+.cursorrules
+.mcp.json
+.opencode.json
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
