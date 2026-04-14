@@ -1,7 +1,23 @@
+[dev]
+  command = "npm run dev --prefix frontend"
+  port = 8888
+  targetPort = 3000
+
 [build]
   base = "frontend"
   command = "npm install && npm run build"
   publish = ".next"
+
+[functions]
+  directory = "../netlify/functions"
+  node_bundler = "esbuild"
+
+# REWRITE RULE: Proxy all /api/* requests to the Go Lambda function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
