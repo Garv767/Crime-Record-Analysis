@@ -1,47 +1,44 @@
 ```
 └── 📁Crime-Record-Analysis
-        ├── COMMIT_EDITMSG
-        ├── config
-        ├── description
-        ├── FETCH_HEAD
-        ├── HEAD
-        ├── index
-        ├── ORIG_HEAD
-    └── 📁api
-        └── 📁cmd
-            ├── main.go
-        └── 📁internal
-            └── 📁database
-                ├── db.go
-            └── 📁handlers
-                ├── locations.go
-            └── 📁models
-        ├── .env
-        ├── .env.example
-        ├── go.mod
-        ├── go.sum
-    └── 📁db
-        ├── Crime DBMS Project (1).png
-        ├── Crime DBMS Project.pdf
-        ├── Crime DBMS Project.png
-        ├── Crime DBMS Project.sql
-        ├── Crime DBMS Project.svg
-        ├── Crime Record Project DBMS.ql
-        ├── insert.sql
-        ├── new.sql
-    └── 📁frontend
         └── 📁app
+            └── 📁analytics
+                ├── page.tsx
+            └── 📁audit
+                ├── page.tsx
+            └── 📁components
+                ├── ClientShell.tsx
+                ├── Header.tsx
+                ├── Sidebar.tsx
+            └── 📁crimes
+                ├── page.tsx
+            └── 📁evidence
+                ├── page.tsx
+            └── 📁fir
+                ├── page.tsx
+            └── 📁map
+                ├── MapView.tsx
+                ├── page.tsx
+            └── 📁offenders
+                ├── page.tsx
+            └── 📁officers
+                ├── page.tsx
+            └── 📁reports
+                ├── page.tsx
+            └── 📁victims
+                ├── page.tsx
             ├── favicon.ico
             ├── globals.css
             ├── layout.tsx
             ├── page.tsx
         └── 📁lib
+            ├── api.ts
         └── 📁public
             ├── file.svg
             ├── globe.svg
             ├── next.svg
             ├── vercel.svg
             ├── window.svg
+        ├── .env
         ├── .gitignore
         ├── eslint.config.mjs
         ├── next-env.d.ts
@@ -51,6 +48,45 @@
         ├── postcss.config.mjs
         ├── README.md
         ├── tsconfig.json
+        ├── tsconfig.tsbuildinfo
+    └── 📁internal
+        └── 📁database
+            ├── db.go
+        └── 📁handlers
+            ├── audit.go
+            ├── crimes.go
+            ├── evidence.go
+            ├── fir.go
+            ├── hotspots.go
+            ├── locations.go
+            ├── offenders.go
+            ├── officers.go
+            ├── victims.go
+        └── 📁models
+            ├── models.go
+        └── 📁router
+            ├── router.go
+    └── 📁netlify
+        └── 📁functions
+            └── 📁api
+                ├── main.exe
+                ├── main.go
+            ├── api.exe
+    ├── .cursorrules
+    ├── .env
     ├── .gitignore
+    ├── .mcp.json
+    ├── .opencode.json
+    ├── .windsurfrules
+    ├── AGENTS.md
+    ├── api_server.exe
+    ├── api.exe
+    ├── CLAUDE.md
+    ├── file_structure.md
+    ├── GEMINI.md
+    ├── go.mod
+    ├── go.sum
+    ├── main.exe
+    ├── netlify.toml
     └── README.md
 ```
