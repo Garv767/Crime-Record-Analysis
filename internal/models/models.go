@@ -80,3 +80,31 @@ type NewFIRRequest struct {
 	OfficerID int    `json:"officer_id"`
 	Status    string `json:"status"`
 }
+
+// Victim represents a person affected by a crime.
+type Victim struct {
+	VictimID  int    `json:"victim_id"`
+	Name      string `json:"name"`
+	Age       int    `json:"age"`
+	ContactNo string `json:"contact_no"`
+	Address   string `json:"address"`
+}
+
+// Evidence represents a piece of physical or digital evidence linked to a crime.
+type Evidence struct {
+	EvidenceID     int    `json:"evidence_id"`
+	CrimeID        int    `json:"crime_id"`
+	Description    string `json:"description"`
+	CollectedBy    int    `json:"collected_by"`
+	CollectionDate string `json:"collection_date"`
+	Status         string `json:"status"`
+}
+
+type AuditLog struct {
+	LogID       int    `json:"log_id"`
+	OfficerName string `json:"officer_name"`
+	Action      string `json:"action"`
+	Target      string `json:"target"`
+	Timestamp   string `json:"timestamp"`
+	IPAddress   string `json:"ip_address"`
+}

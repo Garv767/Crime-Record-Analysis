@@ -31,7 +31,7 @@ func ConnectDB() (*pgxpool.Pool, error) {
 	// For serverless, keep the pool small to avoid exhausting DB connections
 	config.MaxConns = 2
 
-	// FIX: Use SimpleProtocol to avoid "prepared statement already exists" errors
+	// FORCE SimpleProtocol to avoid "prepared statement already exists" errors
 	// with Supabase/PgBouncer connection poolers in Transaction Mode.
 	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
