@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/database"
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/models"
+	"github.com/Garv767/Crime-Record-Analysis/internal/database"
+	"github.com/Garv767/Crime-Record-Analysis/internal/models"
 )
 
 // GetLocations handles GET /api/locations
@@ -20,7 +20,6 @@ func GetLocations(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
 		return
 	}
-	defer conn.Close(context.Background())
 
 	rows, err := conn.Query(
 		context.Background(),

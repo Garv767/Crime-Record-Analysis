@@ -2,7 +2,7 @@
 // Offenders list — ordered by repeat-crime count, with expandable details.
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { getOffenders, Offender } from "../../lib/api";
 
 // Returns a threat level label + badge class based on prior convictions
@@ -61,8 +61,8 @@ export default function OffendersPage() {
               const threat = threatLevel(o.previous_crimes_count);
               const isOpen = expanded === o.offender_id;
               return (
-                <>
-                  <tr key={o.offender_id} style={isOpen ? { background: "var(--bg-row)" } : {}}>
+                <Fragment key={o.offender_id}>
+                  <tr style={isOpen ? { background: "var(--bg-row)" } : {}}>
                     <td className="mono">#{o.offender_id}</td>
                     <td style={{ fontWeight: 600 }}>{o.name}</td>
                     <td className="mono">{o.age}</td>
@@ -113,7 +113,7 @@ export default function OffendersPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>
