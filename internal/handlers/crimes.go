@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/database"
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/models"
+	"github.com/Garv767/Crime-Record-Analysis/internal/database"
+	"github.com/Garv767/Crime-Record-Analysis/internal/models"
 )
 
 // GetCrimes handles GET /api/crimes
@@ -20,7 +20,6 @@ func GetCrimes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
 		return
 	}
-	defer conn.Close(context.Background())
 
 	// Base query: JOIN crimes with locations to include area context
 	query := `
@@ -28,10 +27,10 @@ func GetCrimes(w http.ResponseWriter, r *http.Request) {
 			c.crime_id,
 			c.crime_type,
 			c.occurrence_timestamp,
-			c.description,
-			c.location_id,
-			l.area_name,
-			l.risk_level
+			COALESCE(c.description, '') AS description,
+			COALESCE(c.location_id, 0) AS location_id,
+			COALESCE(l.area_name, 'Unknown') AS area_name,
+			COALESCE(l.risk_level, 0) AS risk_level
 		FROM public.crimes c
 		LEFT JOIN public.locations l ON c.location_id = l.location_id
 	`

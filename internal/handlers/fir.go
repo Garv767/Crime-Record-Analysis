@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/database"
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/models"
+	"github.com/Garv767/Crime-Record-Analysis/internal/database"
+	"github.com/Garv767/Crime-Record-Analysis/internal/models"
 )
 
 // CreateFIR handles POST /api/fir
@@ -43,7 +43,6 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
 		return
 	}
-	defer conn.Close(context.Background())
 
 	// --- Begin Transaction ---
 	tx, err := conn.Begin(context.Background())

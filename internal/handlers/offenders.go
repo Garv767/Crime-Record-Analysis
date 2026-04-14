@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/database"
-	"github.com/Garv767/Crime-Record-Analysis/api/internal/models"
+	"github.com/Garv767/Crime-Record-Analysis/internal/database"
+	"github.com/Garv767/Crime-Record-Analysis/internal/models"
 )
 
 // GetOffenders handles GET /api/offenders
@@ -20,7 +20,6 @@ func GetOffenders(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
 		return
 	}
-	defer conn.Close(context.Background())
 
 	// LEFT JOIN with crime_offender so offenders with zero crimes still appear.
 	// COUNT(co.crime_id) gives the total crimes this offender has been linked to.
@@ -28,9 +27,9 @@ func GetOffenders(w http.ResponseWriter, r *http.Request) {
 		SELECT
 			o.offender_id,
 			o.name,
-			o.age,
-			o.address,
-			o.previous_crimes_count,
+			COALESCE(o.age, 0) AS age,
+			COALESCE(o.address, '') AS address,
+			COALESCE(o.previous_crimes_count, 0) AS previous_crimes_count,
 			COUNT(co.crime_id) AS linked_crimes_count
 		FROM public.offenders o
 		LEFT JOIN public.crime_offender co ON o.offender_id = co.offender_id
