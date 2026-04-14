@@ -2,7 +2,7 @@
 // Centralised API client — all fetch calls to the Go backend go through here.
 // Changing the base URL in one place updates the entire app.
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const API_BASE = ""; // Relative path to handled by Netlify proxy
 
 // Generic fetcher with error handling
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
