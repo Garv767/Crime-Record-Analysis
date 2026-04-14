@@ -100,10 +100,10 @@ export default function Dashboard() {
       </div>
 
       {/* Two-column layout: recent crimes + chart */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "1.5rem", alignItems: "start" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr,320px] gap-6 items-start">
 
         {/* Recent Crimes Table */}
-        <div>
+        <div className="w-full overflow-hidden">
           <div className="section-header">
             <span className="section-title">Recent Incidents</span>
             <Link href="/crimes" className="btn btn-ghost" style={{ fontSize: "0.7rem" }}>
@@ -116,8 +116,8 @@ export default function Dashboard() {
                 <tr>
                   <th>#</th>
                   <th>Type</th>
-                  <th>Location</th>
-                  <th>Date</th>
+                  <th className="h-hidden sm:table-cell">Location</th>
+                  <th className="h-hidden md:table-cell">Date</th>
                   <th>Risk</th>
                 </tr>
               </thead>
@@ -126,8 +126,8 @@ export default function Dashboard() {
                   <tr key={c.crime_id}>
                     <td className="mono">#{c.crime_id}</td>
                     <td>{c.crime_type}</td>
-                    <td className="secondary-text">{c.area_name}</td>
-                    <td className="mono">{fmtDate(c.occurrence_timestamp)}</td>
+                    <td className="secondary-text h-hidden sm:table-cell">{c.area_name}</td>
+                    <td className="mono h-hidden md:table-cell">{fmtDate(c.occurrence_timestamp)}</td>
                     <td>
                       <span className={`badge ${c.risk_level >= 7 ? "badge-high" : c.risk_level >= 4 ? "badge-medium" : "badge-low"}`}>
                         {c.risk_level}
@@ -140,59 +140,75 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Crimes by Type Bar Chart */}
-        <div>
-          <div className="section-header">
-            <span className="section-title">Crimes by Type</span>
+        {/* Sidebar content: Chart + SQL Log */}
+        <div className="flex flex-col gap-6">
+          {/* Crimes by Type Bar Chart */}
+          <div className="w-full">
+            <div className="section-header">
+              <span className="section-title">Crimes by Type</span>
+            </div>
+            <div className="border border-border p-4 bg-surface">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={crimesByType(crimes)}
+                  layout="vertical"
+                  margin={{ top: 0, right: 8, bottom: 0, left: 0 }}
+                >
+                  <XAxis
+                    type="number"
+                    tick={{ fill: "var(--text-secondary)", fontSize: 11, fontFamily: "JetBrains Mono" }}
+                    allowDecimals={false}
+                  />
+                  <YAxis
+                    dataKey="type"
+                    type="category"
+                    width={80}
+                    tick={{ fill: "var(--text-secondary)", fontSize: 11, fontFamily: "JetBrains Mono" }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--bg-surface)",
+                      border: "1px solid var(--border)",
+                      color: "var(--text-primary)",
+                      fontSize: 12,
+                      fontFamily: "Space Grotesk",
+                      borderRadius: 0,
+                      boxShadow: "none",
+                    }}
+                    cursor={{ fill: "var(--bg-hover)" }}
+                  />
+                  <Bar dataKey="count" radius={0}>
+                    {crimesByType(crimes).map((_, i) => (
+                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div style={{ border: "1px solid var(--border)", padding: "1rem" }}>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart
-                data={crimesByType(crimes)}
-                layout="vertical"
-                margin={{ top: 0, right: 8, bottom: 0, left: 0 }}
-              >
-                <XAxis
-                  type="number"
-                  tick={{ fill: "var(--text-secondary)", fontSize: 11, fontFamily: "JetBrains Mono" }}
-                  allowDecimals={false}
-                />
-                <YAxis
-                  dataKey="type"
-                  type="category"
-                  width={80}
-                  tick={{ fill: "var(--text-secondary)", fontSize: 11, fontFamily: "JetBrains Mono" }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: "var(--bg-surface)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-primary)",
-                    fontSize: 12,
-                    fontFamily: "Space Grotesk",
-                    borderRadius: 0,
-                    boxShadow: "none",
-                  }}
-                  cursor={{ fill: "var(--bg-hover)" }}
-                />
-                <Bar dataKey="count" radius={0}>
-                  {crimesByType(crimes).map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+
+          {/* Technical SQL Log Panel */}
+          <div className="border-t border-crimson/30 pt-4">
+            <div className="label mb-2 text-accent">Technical Log // Dashboard Data</div>
+            <div className="bg-surface/50 p-3 border border-border font-mono text-[10px] text-secondary leading-relaxed">
+              <span className="text-dim">// Aggregating live city-wide metrics</span><br/>
+              SELECT <br/>
+              &nbsp;&nbsp;count(crime_id) as total,<br/>
+              &nbsp;&nbsp;(SELECT count(*) FROM offenders WHERE previous_crimes &gt; 0) as repeat,<br/>
+              &nbsp;&nbsp;(SELECT count(*) FROM hotspots WHERE risk_level &gt;= 7) as high_risk<br/>
+              FROM crimes;
+            </div>
           </div>
 
           {/* Top Hotspot teaser */}
           {hotspots.length > 0 && (
-            <div style={{ marginTop: "1rem", border: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+            <div className="border border-border p-4">
               <div className="label mb-2">Highest Crime Area</div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{hotspots[0].area_name}</div>
-              <div className="secondary-text" style={{ fontSize: "0.75rem" }}>
+              <div className="text-lg font-bold">{hotspots[0].area_name}</div>
+              <div className="secondary-text text-xs">
                 {hotspots[0].crime_count} incident{hotspots[0].crime_count !== 1 ? "s" : ""} · Risk {hotspots[0].risk_level}/10
               </div>
-              <Link href="/map" className="btn btn-ghost" style={{ marginTop: "0.75rem", fontSize: "0.7rem" }}>
+              <Link href="/map" className="btn btn-ghost mt-3 w-full justify-center text-[11px]">
                 View Full Map →
               </Link>
             </div>

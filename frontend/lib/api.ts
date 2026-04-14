@@ -72,16 +72,60 @@ export interface FIRResponse {
   fir_id: number;
 }
 
+export interface Victim {
+  victim_id: number;
+  name: string;
+  age: number;
+  contact_no: string;
+  address: string;
+}
+
+export interface PoliceOfficer {
+  officer_id: number;
+  name: string;
+  badge_number: number;
+  rank: string;
+  station: string;
+}
+
+export interface Evidence {
+  evidence_id: number;
+  crime_id: number;
+  description: string;
+  collected_by: number;
+  collection_date: string;
+  status: string;
+}
+
+export interface AuditLog {
+  log_id: number;
+  officer_name: string;
+  action: string;
+  target: string;
+  timestamp: string;
+  ip_address: string;
+}
+
 // --- API Functions ------------------------------------------------------------
 
 export const getCrimes = (type?: string) =>
   apiFetch<Crime[]>(`/api/crimes${type ? `?type=${encodeURIComponent(type)}` : ""}`);
+
+export const getCrimeTypes = () => apiFetch<string[]>("/api/crime-types");
 
 export const getOffenders = () => apiFetch<Offender[]>("/api/offenders");
 
 export const getHotspots = () => apiFetch<Hotspot[]>("/api/hotspots");
 
 export const getLocations = () => apiFetch<Location[]>("/api/locations");
+
+export const getVictims = () => apiFetch<Victim[]>("/api/victims");
+
+export const getOfficers = () => apiFetch<PoliceOfficer[]>("/api/officers");
+
+export const getEvidence = () => apiFetch<Evidence[]>("/api/evidence");
+
+export const getAuditLogs = () => apiFetch<AuditLog[]>("/api/audit");
 
 export const createFIR = (payload: NewFIRPayload) =>
   apiFetch<FIRResponse>("/api/fir", {
