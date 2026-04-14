@@ -11,27 +11,53 @@ import {
   Users,
   MapPin,
   FileText,
+  X,
 } from "lucide-react";
 
 // Navigation entries — each maps to a route in the app
 const NAV_ITEMS = [
   { href: "/",          label: "Dashboard",  icon: LayoutDashboard },
   { href: "/crimes",    label: "Crimes",     icon: AlertCircle     },
-  { href: "/offenders", label: "Offenders",  icon: Users           },
+  { href: "/fir",       label: "FIR Tracking", icon: FileText      },
+  { href: "/officers",  label: "Police Index", icon: Users          },
+  { href: "/victims",   label: "Victim Registry", icon: Users       },
+  { href: "/evidence",  label: "Evidence",   icon: FileText        },
+  { href: "/analytics", label: "Analytics",  icon: LayoutDashboard },
+  { href: "/audit",     label: "Activity Logs", icon: FileText      },
+  { href: "/reports",   label: "Reports",    icon: FileText        },
   { href: "/map",       label: "Crime Map",  icon: MapPin          },
-  { href: "/fir",       label: "File FIR",   icon: FileText        },
 ] as const;
 
-export default function Sidebar() {
+export default function Sidebar({ 
+  isOpen, 
+  setIsOpen 
+}: { 
+  isOpen: boolean; 
+  setIsOpen: (open: boolean) => void 
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="sidebar">
-      {/* System identity */}
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-title">CRPA//SYS</div>
-        <div className="sidebar-logo-sub">Crime Intelligence v1.0</div>
-      </div>
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-[95]" 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* System identity */}
+        <div className="sidebar-logo flex items-center justify-between">
+          <div>
+            <div className="sidebar-logo-title">CRPA//SYS</div>
+            <div className="sidebar-logo-sub">Crime Intelligence v1.0</div>
+          </div>
+          <button className="lg:hidden text-dim" onClick={() => setIsOpen(false)}>
+            <X size={18} />
+          </button>
+        </div>
 
       {/* Navigation links */}
       <nav className="sidebar-nav">
@@ -59,6 +85,7 @@ export default function Sidebar() {
         <br />
         DB → Supabase / PostgreSQL
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

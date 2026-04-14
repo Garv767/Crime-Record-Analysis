@@ -1,10 +1,10 @@
 // frontend/app/layout.tsx
-// Root layout — wraps every page with the sidebar shell and metadata.
+// Root layout — wraps every page with the responsive shell and metadata.
 // Fonts: Space Grotesk (headings/body) + JetBrains Mono (data/IDs).
 import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
+import ClientShell from "./components/ClientShell";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -30,11 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body>
-        {/* App Shell: fixed sidebar + scrollable content area */}
-        <div className="app-shell">
-          <Sidebar />
-          <main className="main-content">{children}</main>
-        </div>
+        <ClientShell>{children}</ClientShell>
       </body>
     </html>
   );

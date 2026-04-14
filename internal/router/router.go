@@ -27,8 +27,13 @@ func SetupRouter() *chi.Mux {
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/locations", handlers.GetLocations)
 		r.Get("/crimes", handlers.GetCrimes)
+		r.Get("/crime-types", handlers.GetCrimeTypes)
 		r.Get("/offenders", handlers.GetOffenders)
 		r.Get("/hotspots", handlers.GetHotspots)
+		r.Get("/victims", handlers.GetVictims)
+		r.Get("/officers", handlers.GetOfficers)
+		r.Get("/evidence", handlers.GetEvidence)
+		r.Get("/audit", handlers.GetAuditLogs)
 		r.Post("/fir", handlers.CreateFIR)
 	})
 

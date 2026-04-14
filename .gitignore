@@ -2,12 +2,11 @@
 # Crime Record & Pattern Analysis — Root .gitignore
 # =============================================================================
 
-# ---- Go (api/) ---------------------------------------------------------------
-api/bin/
-api/*.exe
-api/*.test
-api/*.out
-api/vendor/
+# ---- Build Artifacts ---------------------------------------------------------
+*.exe
+*.test
+*.out
+bin/
 
 # ---- Environment Variables (NEVER commit secrets) ----------------------------
 .env
@@ -52,7 +51,6 @@ yarn-error.log*
 .claude/skills/explore-codebase.md
 .claude/skills/refactor-safely.md
 .claude/skills/review-changes.md
-.gitignore
 .cursor/mcp.json
 .cursorrules
 .mcp.json
@@ -64,3 +62,4 @@ GEMINI.md
 
 # Local Netlify folder
 .netlify
+NETLIFY_GO_MIGRATION_GUIDE.md

@@ -3,9 +3,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { getCrimes, Crime } from "../../lib/api";
-
-const CRIME_TYPES = ["All", "Theft", "Assault", "Robbery", "Cybercrime", "Burglary", "Fraud", "Vandalism"];
+import { getCrimes, getCrimeTypes, Crime } from "../../lib/api";
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString("en-IN", {
@@ -32,9 +30,14 @@ export default function CrimesPage() {
   const [sortKey, setSortKey] = useState<SortKey>("occurrence_timestamp");
   const [sortAsc, setSortAsc] = useState(false);
 
+  const [crimeTypes, setCrimeTypes] = useState<string[]>([]);
+
   useEffect(() => {
-    getCrimes()
-      .then(setCrimes)
+    Promise.all([getCrimes(), getCrimeTypes()])
+      .then(([crimesData, typesData]) => {
+        setCrimes(crimesData);
+        setCrimeTypes(["All", ...typesData]);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -80,7 +83,7 @@ export default function CrimesPage() {
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
         >
-          {CRIME_TYPES.map((t) => <option key={t}>{t}</option>)}
+          {crimeTypes.map((t) => <option key={t}>{t}</option>)}
         </select>
         {typeFilter !== "All" && (
           <button className="btn btn-ghost" onClick={() => setTypeFilter("All")}>

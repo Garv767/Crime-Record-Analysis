@@ -72,3 +72,32 @@ func GetCrimes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(crimes)
 }
+
+// GetCrimeTypes handles GET /api/crime-types
+// It returns a list of unique crime types currently in the records.
+func GetCrimeTypes(w http.ResponseWriter, r *http.Request) {
+	conn, err := database.ConnectDB()
+	if err != nil {
+		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
+		return
+	}
+
+	query := `SELECT DISTINCT crime_type FROM public.crimes ORDER BY crime_type ASC`
+	rows, err := conn.Query(context.Background(), query)
+	if err != nil {
+		http.Error(w, `{"error":"query failed"}`, http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	types := []string{}
+	for rows.Next() {
+		var t string
+		if err := rows.Scan(&t); err == nil {
+			types = append(types, t)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(types)
+}
