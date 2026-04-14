@@ -26,7 +26,7 @@ frontend/.yarn/*
 !frontend/.yarn/releases
 !frontend/.yarn/versions
 frontend/*.tsbuildinfo
-30: frontend/next-env.d.ts
+frontend/next-env.d.ts
 
 # ---- OS & Editor -------------------------------------------------------------
 .DS_Store
