@@ -3,9 +3,9 @@
 // Sends a POST /api/fir to the Go backend which executes a DB transaction.
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { ChevronDown, ChevronUp, FileText, User, Shield, Calendar, Activity } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, FileText, User, Shield, Calendar, Activity } from "lucide-react";
 import { 
   getCrimes, getOfficers, createFIR, getFIRs, updateFIRStatus,
   Crime, PoliceOfficer, NewFIRPayload, FIRDetailed 
@@ -30,7 +30,22 @@ UPDATE public.fir_records
 SET status = $1 
 WHERE fir_id = $2;`;
 
+export const dynamic = "force-dynamic";
+
 export default function FIRPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center p-24">
+        <Loader2 className="animate-spin text-accent" size={32} />
+        <span className="ml-3 text-dim mono">Hydrating Intelligence System...</span>
+      </div>
+    }>
+      <FIRContent />
+    </Suspense>
+  );
+}
+
+function FIRContent() {
   const [crimes, setCrimes] = useState<Crime[]>([]);
   const [officers, setOfficers] = useState<PoliceOfficer[]>([]);
   const [firs, setFirs] = useState<FIRDetailed[]>([]);
