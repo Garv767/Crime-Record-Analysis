@@ -155,11 +155,15 @@ func GetFIRs(w http.ResponseWriter, r *http.Request) {
 			f.fir_id, f.fir_date, f.status, 
 			c.crime_id, c.crime_type, c.occurrence_timestamp, COALESCE(c.description, '') as crime_desc,
 			l.area_name,
-			o.name as officer_name, o.badge_number
+			o.name as officer_name, o.badge_number,
+			COALESCE(STRING_AGG(off.name, ', '), '') as linked_offenders
 		FROM public.fir_records f
 		JOIN public.crimes c ON f.crime_id = c.crime_id
 		JOIN public.locations l ON c.location_id = l.location_id
 		JOIN public.police_officers o ON f.officer_id = o.officer_id
+		LEFT JOIN public.crime_offender co ON c.crime_id = co.crime_id
+		LEFT JOIN public.offenders off ON co.offender_id = off.offender_id
+		GROUP BY f.fir_id, c.crime_id, l.location_id, o.officer_id
 		ORDER BY f.fir_date DESC, f.fir_id DESC
 	`
 
@@ -178,6 +182,7 @@ func GetFIRs(w http.ResponseWriter, r *http.Request) {
 			&f.CrimeID, &f.CrimeType, &f.OccurrenceTimestamp, &f.CrimeDesc,
 			&f.AreaName,
 			&f.OfficerName, &f.BadgeNumber,
+			&f.LinkedOffenders,
 		)
 		if err != nil {
 			continue

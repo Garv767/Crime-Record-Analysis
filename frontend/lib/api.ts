@@ -93,6 +93,7 @@ export interface FIRDetailed {
   area_name: string;
   officer_name: string;
   badge_number: number;
+  linked_offenders: string;
 }
 
 export interface Victim {

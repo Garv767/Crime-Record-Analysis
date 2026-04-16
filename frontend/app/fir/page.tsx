@@ -5,7 +5,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2, ChevronDown, ChevronUp, FileText, User, Shield, Calendar, Activity } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, FileText, User, Shield, Calendar, Activity, Users } from "lucide-react";
 import { 
   getCrimes, getOfficers, createFIR, getFIRs, updateFIRStatus,
   Crime, PoliceOfficer, NewFIRPayload, FIRDetailed 
@@ -330,6 +330,15 @@ function FIRContent() {
                                 <div className="label text-[10px]">Incident Brief</div>
                                 <div className="text-sm italic leading-relaxed text-secondary">
                                   "{fir.crime_desc || "No description provided."}"
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                              <Users className="text-accent mt-1" size={14} />
+                              <div>
+                                <div className="label text-[10px]">Identified Suspects</div>
+                                <div className="text-sm font-bold text-accent">
+                                  {fir.linked_offenders || "None Identified"}
                                 </div>
                               </div>
                             </div>

@@ -85,6 +85,7 @@ type FIRDetailed struct {
 	AreaName            string    `json:"area_name"`
 	OfficerName         string    `json:"officer_name"`
 	BadgeNumber         int       `json:"badge_number"`
+	LinkedOffenders     string    `json:"linked_offenders"`
 }
 
 // NewFIRRequest is the payload accepted by POST /api/fir.
