@@ -19,9 +19,14 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CRPA — Crime Intelligence System",
+  title: "Crime Record & Pattern Analysis (CRPA) — Central Intelligence",
   description:
-    "Crime Record & Pattern Analysis dashboard for law enforcement. Track incidents, offenders, and hotspots across Chennai.",
+    "Advanced incident management and pattern analysis suite for law enforcement. Managed via atomic database transitions and real-time geospatial intelligence.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,10 +1,28 @@
-# Crime Record & Pattern Analysis (CRPA)
+# Crime Record and Pattern Analysis (CRPA)
 
-**Student:** Garv Rahut · RA2411003010718  
-**Course:** 21CSC205P — Database Management Systems  
-**University:** SRM Institute of Science and Technology, Kattankulatham
+<details open>
+  <summary><b>Dashboard Intelligence</b></summary>
+  <br>
+  <img src="docs/dashboard.png" alt="CRPA Analytics Dashboard">
+</details>
 
----
+<details>
+  <summary><b>Geospatial Hotspot Matrix</b></summary>
+  <br>
+  <img src="docs/map.png" alt="CRPA Crime Map">
+</details>
+
+<details>
+  <summary><b>Analytics</b></summary>
+  <br>
+  <img src="docs/Analytics.png" alt="Analytics">
+</details>
+
+<details>
+  <summary><b>FIR Lifecycle Tracking</b></summary>
+  <br>
+  <img src="docs/fir_tracking.png" alt="FIR Tracking">
+</details>
 
 ## Overview
 

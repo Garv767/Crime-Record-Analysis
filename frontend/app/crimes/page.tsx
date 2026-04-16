@@ -243,7 +243,7 @@ export default function CrimesPage() {
                 <select 
                   className="form-select" 
                   value={newLocId} 
-                  onChange={e => setNewLocId(e.target.value)}
+                  onChange={e => setNewLocId(e.target.value ? Number(e.target.value) : "")}
                   required
                 >
                   <option value="">— Select Location —</option>
