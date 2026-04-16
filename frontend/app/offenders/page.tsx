@@ -1,9 +1,8 @@
-// frontend/app/offenders/page.tsx
-// Offenders list — ordered by repeat-crime count, with expandable details.
 "use client";
 
 import { useEffect, useState, Fragment } from "react";
 import { getOffenders, Offender } from "../../lib/api";
+import SQLFooter from "../components/SQLFooter";
 
 // Returns a threat level label + badge class based on prior convictions
 function threatLevel(count: number): { label: string; cls: string } {
@@ -12,6 +11,17 @@ function threatLevel(count: number): { label: string; cls: string } {
   if (count >= 1) return { label: "LOW",    cls: "badge-low" };
   return { label: "NONE", cls: "" };
 }
+
+const SQL_QUERY = `SELECT 
+  o.offender_id, 
+  o.name, 
+  o.age, 
+  o.previous_crimes_count as prior_convictions, 
+  count(ol.crime_id) as active_links 
+FROM public.offenders o 
+LEFT JOIN public.offender_links ol ON o.offender_id = ol.offender_id 
+GROUP BY o.offender_id 
+ORDER BY prior_convictions DESC;`;
 
 export default function OffendersPage() {
   const [offenders, setOffenders] = useState<Offender[]>([]);
@@ -38,7 +48,7 @@ export default function OffendersPage() {
         <div>
           <h1 className="page-title">Offender Registry</h1>
           <p className="page-subtitle">
-            {offenders.length} registered · {repeatCount} repeat offenders
+            {offenders.length} registered · {repeatCount} recidivists
           </p>
         </div>
       </div>
@@ -95,7 +105,7 @@ export default function OffendersPage() {
                   {/* Expandable detail row */}
                   {isOpen && (
                     <tr key={`${o.offender_id}-detail`} style={{ background: "var(--bg-row)" }}>
-                      <td colSpan={7} style={{ padding: "0.75rem 1rem", borderTop: "1px solid var(--border-dim)" }}>
+                      <td colSpan={7} style={{ padding: "1.5rem", borderTop: "1px solid var(--border-dim)" }}>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
                           <div>
                             <div className="label mb-1">Full Name</div>
@@ -119,6 +129,8 @@ export default function OffendersPage() {
           </tbody>
         </table>
       </div>
+
+      <SQLFooter query={SQL_QUERY} />
     </>
   );
 }

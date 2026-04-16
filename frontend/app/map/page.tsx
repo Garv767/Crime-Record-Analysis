@@ -7,12 +7,25 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { getHotspots, Hotspot } from "../../lib/api";
+import SQLFooter from "../components/SQLFooter";
 
 // Dynamically import the map component with SSR disabled.
 // Leaflet uses window/document, which don't exist during Next.js server rendering.
 const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => (
   <div className="state-loading" style={{ height: 500 }}>Initialising map...</div>
 )});
+
+const SQL_QUERY = `SELECT 
+  l.location_id, 
+  l.area_name, 
+  l.latitude, 
+  l.longitude, 
+  l.risk_level, 
+  count(c.crime_id) as incident_count 
+FROM public.locations l 
+LEFT JOIN public.crimes c ON l.location_id = c.location_id 
+GROUP BY l.location_id 
+ORDER BY incident_count DESC;`;
 
 export default function MapPage() {
   const [hotspots, setHotspots] = useState<Hotspot[]>([]);
@@ -31,7 +44,7 @@ export default function MapPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Crime Hotspot Map</h1>
-          <p className="page-subtitle">Chennai Metropolitan Area — {hotspots.length} active zones</p>
+          <p className="page-subtitle">Chennai Metropolitan Area — {hotspots.length} active risk zones</p>
         </div>
         {/* Legend */}
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
@@ -53,7 +66,7 @@ export default function MapPage() {
       {/* Hotspot data table below the map */}
       <div style={{ marginTop: "1.5rem" }}>
         <div className="section-header">
-          <span className="section-title">Zone Details</span>
+          <span className="section-title">Zone Intel</span>
         </div>
         <div className="data-table-wrap">
           <table className="data-table">
@@ -84,6 +97,8 @@ export default function MapPage() {
           </table>
         </div>
       </div>
+
+      <SQLFooter query={SQL_QUERY} />
     </>
   );
 }
