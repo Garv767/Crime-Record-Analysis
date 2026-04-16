@@ -41,6 +41,12 @@ export interface Offender {
   linked_crimes_count: number;
 }
 
+export interface LinkOffenderPayload {
+  crime_id: number;
+  offender_id: number;
+  role: string;
+}
+
 export interface Hotspot {
   location_id: number;
   area_name: string;
@@ -65,11 +71,29 @@ export interface NewFIRPayload {
   crime_id: number;
   officer_id: number;
   status: "Open" | "Closed" | "Under Investigation";
+  victim_name?: string;
+  victim_age?: number;
+  victim_contact?: string;
+  victim_address?: string;
 }
 
 export interface FIRResponse {
   message: string;
   fir_id: number;
+}
+
+export interface FIRDetailed {
+  fir_id: number;
+  fir_date: string;
+  status: "Open" | "Closed" | "Under Investigation";
+  crime_id: number;
+  crime_type: string;
+  occurrence_timestamp: string;
+  crime_desc: string;
+  area_name: string;
+  officer_name: string;
+  badge_number: number;
+  linked_offenders: string;
 }
 
 export interface Victim {
@@ -97,38 +121,60 @@ export interface Evidence {
   status: string;
 }
 
-export interface AuditLog {
-  log_id: number;
-  officer_name: string;
-  action: string;
-  target: string;
-  timestamp: string;
-  ip_address: string;
-}
-
 // --- API Functions ------------------------------------------------------------
 
 export const getCrimes = (type?: string) =>
   apiFetch<Crime[]>(`/api/crimes${type ? `?type=${encodeURIComponent(type)}` : ""}`);
 
 export const getCrimeTypes = () => apiFetch<string[]>("/api/crime-types");
+export const createCrime = (payload: { crime_type: string; description: string; location_id: number }) =>
+  apiFetch<{ message: string; crime_id: number }>("/api/crimes", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const getOffenders = () => apiFetch<Offender[]>("/api/offenders");
+export const linkOffenderToCrime = (payload: LinkOffenderPayload) =>
+  apiFetch<{ message: string }>("/api/offenders/link", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const getHotspots = () => apiFetch<Hotspot[]>("/api/hotspots");
 
 export const getLocations = () => apiFetch<Location[]>("/api/locations");
 
 export const getVictims = () => apiFetch<Victim[]>("/api/victims");
+export const createVictim = (payload: Omit<Victim, 'victim_id'>) =>
+  apiFetch<Victim>("/api/victims", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const getOfficers = () => apiFetch<PoliceOfficer[]>("/api/officers");
+export const createOfficer = (payload: Omit<PoliceOfficer, 'officer_id'>) =>
+  apiFetch<PoliceOfficer>("/api/officers", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const getEvidence = () => apiFetch<Evidence[]>("/api/evidence");
-
-export const getAuditLogs = () => apiFetch<AuditLog[]>("/api/audit");
+export const createEvidence = (payload: Omit<Evidence, 'evidence_id' | 'collection_date'>) =>
+  apiFetch<Evidence>("/api/evidence", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const createFIR = (payload: NewFIRPayload) =>
   apiFetch<FIRResponse>("/api/fir", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+
+export const getFIRs = () => apiFetch<FIRDetailed[]>("/api/fir");
+
+export const updateFIRStatus = (id: number, status: string) =>
+  apiFetch<{ message: string }>(`/api/fir/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ status }),
   });

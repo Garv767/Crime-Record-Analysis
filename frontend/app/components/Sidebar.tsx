@@ -17,13 +17,13 @@ import {
 // Navigation entries — each maps to a route in the app
 const NAV_ITEMS = [
   { href: "/",          label: "Dashboard",  icon: LayoutDashboard },
-  { href: "/crimes",    label: "Crimes",     icon: AlertCircle     },
+  { href: "/crimes",    label: "Incidents",  icon: AlertCircle     },
   { href: "/fir",       label: "FIR Tracking", icon: FileText      },
-  { href: "/officers",  label: "Police Index", icon: Users          },
-  { href: "/victims",   label: "Victim Registry", icon: Users       },
+  { href: "/offenders", label: "Offender Registry", icon: Users    },
+  { href: "/officers",  label: "Police Index", icon: Users         },
+  { href: "/victims",   label: "Victim Registry", icon: Users      },
   { href: "/evidence",  label: "Evidence",   icon: FileText        },
   { href: "/analytics", label: "Analytics",  icon: LayoutDashboard },
-  { href: "/audit",     label: "Activity Logs", icon: FileText      },
   { href: "/reports",   label: "Reports",    icon: FileText        },
   { href: "/map",       label: "Crime Map",  icon: MapPin          },
 ] as const;

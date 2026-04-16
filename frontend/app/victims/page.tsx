@@ -1,9 +1,19 @@
 // frontend/app/victims/page.tsx
 "use client";
 
-import { Users, Shield, Lock, Search } from "lucide-react";
+import { Users, Shield, Lock, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getVictims, Victim } from "../../lib/api";
+import { getVictims, createVictim, Victim } from "../../lib/api";
+import SQLFooter from "../components/SQLFooter";
+
+const SQL_QUERY = `SELECT 
+  v.victim_id, 
+  v.name, 
+  v.age, 
+  v.contact_no, 
+  v.address 
+FROM public.victims v 
+ORDER BY v.victim_id DESC;`;
 
 export default function VictimRegistry() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,19 +21,45 @@ export default function VictimRegistry() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [showAdd, setShowAdd] = useState(false);
+  const [newVic, setNewVic] = useState({ name: "", age: 0, contact_no: "", address: "" });
+  const [saving, setSaving] = useState(false);
+
+  const fetchVictims = () => {
     getVictims()
       .then(setVictims)
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchVictims();
   }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await createVictim(newVic);
+      setShowAdd(false);
+      setNewVic({ name: "", age: 0, contact_no: "", address: "" });
+      fetchVictims();
+    } catch(err: any) {
+      alert("Error: " + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) return <div className="state-loading">Accessing protected records...</div>;
   if (error)   return <div className="state-empty text-accent">Error: {error}</div>;
 
   const filteredVictims = victims.filter(v => 
+    searchTerm === "" ||
     v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.victim_id.toString().includes(searchTerm)
+    v.victim_id.toString().includes(searchTerm) ||
+    v.contact_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    v.address?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -33,7 +69,7 @@ export default function VictimRegistry() {
           <h1 className="page-title">Victim Registry</h1>
           <p className="page-subtitle">Secure management of survivor data and incident testimony.</p>
         </div>
-        <button className="btn btn-primary">+ Register Victim</button>
+        <button className="btn btn-primary" onClick={() => setShowAdd(true)}>+ Register Victim</button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-8 items-start">
@@ -44,7 +80,7 @@ export default function VictimRegistry() {
               <Search size={14} className="text-secondary" />
               <input 
                 type="text" 
-                placeholder="Search by VIC-ID..." 
+                placeholder="Search..." 
                 className="bg-transparent border-none text-[12px] outline-none text-primary"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -106,6 +142,47 @@ export default function VictimRegistry() {
           </div>
         </div>
       </div>
+
+      <SQLFooter query={SQL_QUERY} />
+
+      {showAdd && (
+        <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+          <form className="bg-surface border border-border w-full max-w-lg p-6" onSubmit={handleCreate}>
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
+              <h2 className="text-lg font-bold uppercase tracking-tight">Register Victim</h2>
+              <button type="button" onClick={() => setShowAdd(false)} className="text-secondary hover:text-primary"><X size={18}/></button>
+            </div>
+            
+            <div className="flex flex-col gap-4 mb-6">
+              <div className="grid grid-cols-[1fr,80px] gap-4">
+                <div className="form-field">
+                  <label className="form-label">Full Name</label>
+                  <input required className="form-input" value={newVic.name} onChange={e => setNewVic({...newVic, name: e.target.value})} placeholder="Full legal name" />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">Age</label>
+                  <input required type="number" className="form-input" value={newVic.age || ''} onChange={e => setNewVic({...newVic, age: parseInt(e.target.value) || 0})} placeholder="Age" />
+                </div>
+              </div>
+              <div className="form-field">
+                <label className="form-label">Contact Number</label>
+                <input required className="form-input" value={newVic.contact_no} onChange={e => setNewVic({...newVic, contact_no: e.target.value})} placeholder="Primary contact" />
+              </div>
+              <div className="form-field">
+                <label className="form-label">Address</label>
+                <textarea className="form-input min-h-[80px] py-2" rows={3} value={newVic.address} onChange={e => setNewVic({...newVic, address: e.target.value})} placeholder="Current residential address..."></textarea>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+              <button type="button" className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button type="submit" className="btn btn-primary" disabled={saving}>
+                {saving ? "Registering..." : "Register Victim →"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </>
   );
 }

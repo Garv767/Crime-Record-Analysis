@@ -73,12 +73,36 @@ type FIRRecord struct {
 	Status    string    `json:"status"`
 }
 
+// FIRDetailed contains joined data for the FIR tracking board.
+type FIRDetailed struct {
+	FIRID               int       `json:"fir_id"`
+	FIRDate             time.Time `json:"fir_date"`
+	Status              string    `json:"status"`
+	CrimeID             int       `json:"crime_id"`
+	CrimeType           string    `json:"crime_type"`
+	OccurrenceTimestamp time.Time `json:"occurrence_timestamp"`
+	CrimeDesc           string    `json:"crime_desc"`
+	AreaName            string    `json:"area_name"`
+	OfficerName         string    `json:"officer_name"`
+	BadgeNumber         int       `json:"badge_number"`
+	LinkedOffenders     string    `json:"linked_offenders"`
+}
+
 // NewFIRRequest is the payload accepted by POST /api/fir.
 // The handler uses this to execute the transactional insert.
 type NewFIRRequest struct {
-	CrimeID   int    `json:"crime_id"`
-	OfficerID int    `json:"officer_id"`
-	Status    string `json:"status"`
+	CrimeID       int    `json:"crime_id"`
+	OfficerID     int    `json:"officer_id"`
+	Status        string `json:"status"`
+	VictimName    string `json:"victim_name"`
+	VictimAge     int    `json:"victim_age"`
+	VictimContact string `json:"victim_contact"`
+	VictimAddress string `json:"victim_address"`
+}
+
+// UpdateFIRStatusRequest is the payload accepted by PUT /api/fir/{id}.
+type UpdateFIRStatusRequest struct {
+	Status string `json:"status"`
 }
 
 // Victim represents a person affected by a crime.
@@ -107,4 +131,11 @@ type AuditLog struct {
 	Target      string `json:"target"`
 	Timestamp   string `json:"timestamp"`
 	IPAddress   string `json:"ip_address"`
+}
+
+// LinkOffenderRequest is the payload accepted by POST /api/offenders/link.
+type LinkOffenderRequest struct {
+	CrimeID    int    `json:"crime_id"`
+	OffenderID int    `json:"offender_id"`
+	Role       string `json:"role"`
 }

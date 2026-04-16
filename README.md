@@ -1,10 +1,28 @@
-# Crime Record & Pattern Analysis (CRPA)
+# Crime Record and Pattern Analysis (CRPA)
 
-**Student:** Garv Rahut · RA2411003010718  
-**Course:** 21CSC205P — Database Management Systems  
-**University:** SRM Institute of Science and Technology, Kattankulatham
+<details open>
+  <summary><b>Dashboard Intelligence</b></summary>
+  <br>
+  <img src="docs/dashboard.png" alt="CRPA Analytics Dashboard">
+</details>
 
----
+<details>
+  <summary><b>Geospatial Hotspot Matrix</b></summary>
+  <br>
+  <img src="docs/map.png" alt="CRPA Crime Map">
+</details>
+
+<details>
+  <summary><b>Analytics</b></summary>
+  <br>
+  <img src="docs/Analytics.png" alt="Analytics">
+</details>
+
+<details>
+  <summary><b>FIR Lifecycle Tracking</b></summary>
+  <br>
+  <img src="docs/fir_tracking.png" alt="FIR Tracking">
+</details>
 
 ## Overview
 
@@ -85,7 +103,10 @@ npm run dev                 # Starts on http://localhost:3000
 | GET    | `/api/crimes`    | All incidents, joined with location. `?type=` filter supported |
 | GET    | `/api/offenders` | All offenders ordered by repeat-crime count      |
 | GET    | `/api/hotspots`  | Crime counts grouped by location (for map)       |
+| GET    | `/api/fir`       | Fetch all filed FIRs with joined details         |
 | POST   | `/api/fir`       | File a new FIR (runs a DB transaction)           |
+| PUT    | `/api/fir/{id}`  | Update FIR investigation status                  |
+| GET    | `/api/audit`     | View system-wide audit trail                     |
 
 ### POST /api/fir — Request Body
 
@@ -93,8 +114,21 @@ npm run dev                 # Starts on http://localhost:3000
 {
   "crime_id":   1,
   "officer_id": 3,
-  "status":     "Open"
+  "status":     "Open",
+  "victim_name":    "R. Subramanian",
+  "victim_age":     45,
+  "victim_contact": "+91 9876543210",
+  "victim_address": "Chennai, Tamil Nadu"
 }
 ```
 
 `status` must be one of: `"Open"`, `"Closed"`, `"Under Investigation"`.
+
+---
+
+## Technical Accountability (Audit Trail)
+
+The system automatically logs critical actions to ensure transparency and integrity:
+- **CREATE_FIR**: Logged when a new report is filed, including the officer's name and linked incident.
+- **IDENTIFY_OFFENDER**: Logged when an offender is linked to a crime.
+- **EVIDENCE_LOGGED**: Logged when new evidence is registered.
