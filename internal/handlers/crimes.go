@@ -101,3 +101,53 @@ func GetCrimeTypes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(types)
 }
+
+// CreateCrime handles POST /api/crimes
+// It registers a new criminal incident in the system.
+func CreateCrime(w http.ResponseWriter, r *http.Request) {
+	var payload struct {
+		CrimeType   string `json:"crime_type"`
+		Description string `json:"description"`
+		LocationID  int    `json:"location_id"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Basic validation
+	if payload.CrimeType == "" || payload.LocationID == 0 {
+		http.Error(w, `{"error":"crime_type and location_id are required"}`, http.StatusBadRequest)
+		return
+	}
+
+	conn, err := database.ConnectDB()
+	if err != nil {
+		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
+		return
+	}
+
+	query := `
+		INSERT INTO public.crimes (crime_type, description, location_id, occurrence_timestamp)
+		VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+		RETURNING crime_id, occurrence_timestamp
+	`
+
+	var crimeID int
+	var timestamp string
+	err = conn.QueryRow(context.Background(), query, payload.CrimeType, payload.Description, payload.LocationID).Scan(&crimeID, &timestamp)
+
+	if err != nil {
+		http.Error(w, `{"error":"failed to register incident: `+err.Error()+`"}`, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]any{
+		"message":   "Incident registered successfully",
+		"crime_id":  crimeID,
+		"timestamp": timestamp,
+	})
+}
