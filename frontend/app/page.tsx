@@ -1,14 +1,11 @@
-// frontend/app/page.tsx
-// Dashboard — the landing page of the CRPA system.
-// Shows live stat counts, a recent crimes table, and a crimes-by-type bar chart.
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { getCrimes, getOffenders, getHotspots, Crime, Offender, Hotspot } from "../lib/api";
+import SQLFooter from "./components/SQLFooter";
 
-// Formats an ISO timestamp to a readable short form
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "2-digit",
@@ -17,7 +14,6 @@ function fmtDate(iso: string): string {
   });
 }
 
-// Returns the correct CSS class for a crime status badge
 function statusBadge(status: string) {
   switch (status?.toLowerCase()) {
     case "open": return "badge badge-open";
@@ -26,7 +22,6 @@ function statusBadge(status: string) {
   }
 }
 
-// Aggregates crimes into a count-per-type array for the bar chart
 function crimesByType(crimes: Crime[]) {
   const counts: Record<string, number> = {};
   crimes.forEach((c) => {
@@ -37,8 +32,13 @@ function crimesByType(crimes: Crime[]) {
     .sort((a, b) => b.count - a.count);
 }
 
-// Bar chart accent colours — one per crime type, cycling through a palette
 const CHART_COLORS = ["#e63946", "#e68e1b", "#4ea8de", "#43a047", "#9c27b0", "#ff7043"];
+
+const SQL_QUERY = `SELECT 
+  count(crime_id) as total_incidents,
+  (SELECT count(*) FROM offenders) as known_offenders,
+  (SELECT count(*) FROM hotspots WHERE risk_level >= 7) as high_risk_zones
+FROM crimes;`;
 
 export default function Dashboard() {
   const [crimes, setCrimes] = useState<Crime[]>([]);
@@ -48,7 +48,6 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch all three datasets in parallel
     Promise.all([getCrimes(), getOffenders(), getHotspots()])
       .then(([c, o, h]) => {
         setCrimes(c);
@@ -64,7 +63,7 @@ export default function Dashboard() {
   const repeatOffenders = offenders.filter((o) => o.previous_crimes_count > 0).length;
 
   if (loading) return <div className="state-loading">Connecting to CRPA API...</div>;
-  if (error)   return <div className="state-empty" style={{ color: "var(--accent)" }}>Error: {error}. Is the Go server running on :8080?</div>;
+  if (error)   return <div className="state-empty" style={{ color: "var(--accent)" }}>Error: {error}</div>;
 
   return (
     <>
@@ -176,6 +175,7 @@ export default function Dashboard() {
                       boxShadow: "none",
                     }}
                     cursor={{ fill: "var(--bg-hover)" }}
+                    itemStyle={{color: 'var(--accent-hover)'}}
                   />
                   <Bar dataKey="count" radius={0}>
                     {crimesByType(crimes).map((_, i) => (
@@ -203,7 +203,7 @@ export default function Dashboard() {
           {/* Top Hotspot teaser */}
           {hotspots.length > 0 && (
             <div className="border border-border p-4">
-              <div className="label mb-2">Highest Crime Area</div>
+              <div className="label mb-2">Highest Risk Area</div>
               <div className="text-lg font-bold">{hotspots[0].area_name}</div>
               <div className="secondary-text text-xs">
                 {hotspots[0].crime_count} incident{hotspots[0].crime_count !== 1 ? "s" : ""} · Risk {hotspots[0].risk_level}/10
@@ -215,6 +215,8 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      <SQLFooter query={SQL_QUERY} />
     </>
   );
 }
