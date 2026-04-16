@@ -6,7 +6,9 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/Garv767/Crime-Record-Analysis/internal/database"
 	"github.com/Garv767/Crime-Record-Analysis/internal/models"
 )
@@ -64,24 +66,39 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		req.CrimeID, req.OfficerID, req.Status,
 	).Scan(&newFIRID)
 	if err != nil {
-		http.Error(w, `{"error":"failed to insert FIR — crime may already have a report"}`, http.StatusConflict)
+		errStr := err.Error()
+		errMsg := "failed to insert FIR"
+		if strings.Contains(errStr, "unique constraint") {
+			errMsg = "This incident already has an FIR registered."
+		}
+		http.Error(w, `{"error":"`+errMsg+`"}`, http.StatusConflict)
 		return
 	}
 
-	// Step 2: Update the crime's conceptual status by ensuring the FIR status matches.
-	// (fir_records.status is the authoritative status field for a crime's investigation state)
-	// This step future-proofs the schema if a direct status column is added to crimes.
-	_, err = tx.Exec(
-		context.Background(),
-		`UPDATE public.fir_records SET status = $1 WHERE fir_id = $2`,
-		req.Status, newFIRID,
-	)
-	if err != nil {
-		http.Error(w, `{"error":"failed to update FIR status"}`, http.StatusInternalServerError)
-		return
+	// Wait, we also need to process the optional victim information here if provided.
+	if req.VictimName != "" {
+		var victimID int
+		// Check if victim exists by contact number
+		err := tx.QueryRow(
+			context.Background(),
+			`SELECT victim_id FROM public.victims WHERE contact_no = $1 LIMIT 1`,
+			req.VictimContact,
+		).Scan(&victimID)
+
+		if err != nil {
+			// Insert new victim
+			err = tx.QueryRow(
+				context.Background(),
+				`INSERT INTO public.victims (name, age, contact_no, address) VALUES ($1, $2, $3, $4) RETURNING victim_id`,
+				req.VictimName, req.VictimAge, req.VictimContact, req.VictimAddress,
+			).Scan(&victimID)
+		}
+
+		if err == nil {
+			tx.Exec(context.Background(), `INSERT INTO public.crime_victims (crime_id, victim_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, req.CrimeID, victimID)
+		}
 	}
 
-	// --- Commit Transaction ---
 	if err := tx.Commit(context.Background()); err != nil {
 		http.Error(w, `{"error":"transaction commit failed"}`, http.StatusInternalServerError)
 		return
@@ -94,4 +111,89 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		"message": "FIR filed successfully",
 		"fir_id":  newFIRID,
 	})
+}
+
+// GetFIRs handles GET /api/fir
+func GetFIRs(w http.ResponseWriter, r *http.Request) {
+	conn, err := database.ConnectDB()
+	if err != nil {
+		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
+		return
+	}
+
+	query := `
+		SELECT 
+			f.fir_id, f.fir_date, f.status, 
+			c.crime_id, c.crime_type, c.occurrence_timestamp, COALESCE(c.description, '') as crime_desc,
+			l.area_name,
+			o.name as officer_name, o.badge_number
+		FROM public.fir_records f
+		JOIN public.crimes c ON f.crime_id = c.crime_id
+		JOIN public.locations l ON c.location_id = l.location_id
+		JOIN public.police_officers o ON f.officer_id = o.officer_id
+		ORDER BY f.fir_date DESC, f.fir_id DESC
+	`
+
+	rows, err := conn.Query(context.Background(), query)
+	if err != nil {
+		http.Error(w, `{"error":"query failed: `+err.Error()+`"}`, http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	firs := []models.FIRDetailed{}
+	for rows.Next() {
+		var f models.FIRDetailed
+		err := rows.Scan(
+			&f.FIRID, &f.FIRDate, &f.Status,
+			&f.CrimeID, &f.CrimeType, &f.OccurrenceTimestamp, &f.CrimeDesc,
+			&f.AreaName,
+			&f.OfficerName, &f.BadgeNumber,
+		)
+		if err != nil {
+			continue
+		}
+		firs = append(firs, f)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(firs)
+}
+
+// UpdateFIRStatus handles PUT /api/fir/{fir_id}
+func UpdateFIRStatus(w http.ResponseWriter, r *http.Request) {
+	firID := chi.URLParam(r, "fir_id")
+	if firID == "" {
+		http.Error(w, `{"error":"missing fir_id"}`, http.StatusBadRequest)
+		return
+	}
+
+	var req models.UpdateFIRStatusRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+		return
+	}
+
+	validStatuses := map[string]bool{
+		"Open": true, "Closed": true, "Under Investigation": true,
+	}
+	if !validStatuses[req.Status] {
+		http.Error(w, `{"error":"invalid status"}`, http.StatusBadRequest)
+		return
+	}
+
+	conn, err := database.ConnectDB()
+	if err != nil {
+		http.Error(w, `{"error":"database connection failed"}`, http.StatusInternalServerError)
+		return
+	}
+
+	_, err = conn.Exec(context.Background(), `UPDATE public.fir_records SET status = $1 WHERE fir_id = $2`, req.Status, firID)
+	if err != nil {
+		http.Error(w, `{"error":"failed to update status"}`, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Status updated successfully"})
 }
