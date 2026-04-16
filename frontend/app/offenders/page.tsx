@@ -157,50 +157,52 @@ export default function OffendersPage() {
 
                         {/* Link to Incident Form */}
                         <div className="mt-6 pt-6 border-t border-border-dim">
-                          <div className="label mb-3 text-accent flex items-center gap-2">
-                            Link to Incident
-                          </div>
-                          <div className="flex flex-wrap items-end gap-4">
-                            <div className="flex-1 min-w-[200px]">
-                              <label className="form-label" style={{ fontSize: '0.65rem' }}>Select Incident</label>
-                              <select 
-                                className="form-select w-full"
-                                value={selectedCrimeId}
-                                onChange={e => setSelectedCrimeId(e.target.value ? Number(e.target.value) : "")}
-                              >
-                                <option value="">— Select Incident —</option>
-                                {crimes.map(c => (
-                                  <option key={c.crime_id} value={c.crime_id}>
-                                    #{c.crime_id} · {c.crime_type} ({c.area_name})
-                                  </option>
-                                ))}
-                              </select>
+                          <div className="p-4 bg-black/20 rounded border border-border-dim">
+                            <div className="label mb-4 text-accent flex items-center gap-2">
+                              Link to Incident
                             </div>
-                            <div className="w-[180px]">
-                              <label className="form-label" style={{ fontSize: '0.65rem' }}>Role</label>
-                              <select 
-                                className="form-select w-full"
-                                value={selectedRole}
-                                onChange={e => setSelectedRole(e.target.value)}
+                            <div className="flex flex-wrap items-end gap-6">
+                              <div className="flex-1 min-w-[200px]">
+                                <label className="form-label" style={{ fontSize: '0.65rem' }}>Select Incident</label>
+                                <select 
+                                  className="form-select w-full"
+                                  value={selectedCrimeId}
+                                  onChange={e => setSelectedCrimeId(e.target.value ? Number(e.target.value) : "")}
+                                >
+                                  <option value="">— Select Incident —</option>
+                                  {crimes.map(c => (
+                                    <option key={c.crime_id} value={c.crime_id}>
+                                      #{c.crime_id} · {c.crime_type} ({c.area_name})
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="w-[180px]">
+                                <label className="form-label" style={{ fontSize: '0.65rem' }}>Role</label>
+                                <select 
+                                  className="form-select w-full"
+                                  value={selectedRole}
+                                  onChange={e => setSelectedRole(e.target.value)}
+                                >
+                                  <option value="Primary Suspect">Primary Suspect</option>
+                                  <option value="Accomplice">Accomplice</option>
+                                  <option value="Witness">Witness</option>
+                                  <option value="Mastermind">Mastermind</option>
+                                </select>
+                              </div>
+                              <button 
+                                className="btn btn-primary"
+                                disabled={linking || !selectedCrimeId}
+                                onClick={() => handleLink(o.offender_id)}
+                                style={{ padding: "0.5rem 1.5rem", fontSize: "0.8rem", height: "36px" }}
                               >
-                                <option value="Primary Suspect">Primary Suspect</option>
-                                <option value="Accomplice">Accomplice</option>
-                                <option value="Witness">Witness</option>
-                                <option value="Mastermind">Mastermind</option>
-                              </select>
+                                {linking ? "Linking..." : "Establish Link"}
+                              </button>
                             </div>
-                            <button 
-                              className="btn btn-primary"
-                              disabled={linking || !selectedCrimeId}
-                              onClick={() => handleLink(o.offender_id)}
-                              style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", height: "36px" }}
-                            >
-                              {linking ? "Linking..." : "Establish Link"}
-                            </button>
+                            <p className="text-[10px] text-dim mt-4 italic">
+                                * Linkage actions are recorded in the central audit registry.
+                            </p>
                           </div>
-                          <p className="text-[10px] text-dim mt-3 italic">
-                              * Linkage actions are recorded in the central audit registry.
-                          </p>
                         </div>
                       </td>
                     </tr>
