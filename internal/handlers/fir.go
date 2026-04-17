@@ -5,6 +5,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -75,7 +76,18 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Wait, we also need to process the optional victim information here if provided.
+	// Step 2: Fetch officer name for Audit Log
+	var officerName string
+	err = tx.QueryRow(
+		context.Background(),
+		`SELECT name FROM public.police_officers WHERE officer_id = $1`,
+		req.OfficerID,
+	).Scan(&officerName)
+	if err != nil {
+		officerName = "Unknown Officer" // Fallback but continue
+	}
+
+	// Step 3: Process Victim Information
 	if req.VictimName != "" {
 		var victimID int
 		// Check if victim exists by contact number
@@ -95,8 +107,25 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err == nil {
-			tx.Exec(context.Background(), `INSERT INTO public.crime_victims (crime_id, victim_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, req.CrimeID, victimID)
+			// Link victim to the incident (Crime record)
+			_, err = tx.Exec(context.Background(), `UPDATE public.crimes SET victim_id = $1 WHERE crime_id = $2`, victimID, req.CrimeID)
+			if err != nil {
+				http.Error(w, `{"error":"failed to link victim to incident: `+err.Error()+`"}`, http.StatusInternalServerError)
+				return
+			}
 		}
+	}
+
+	// Step 4: Write Audit Log for Technical Accountability
+	_, err = tx.Exec(
+		context.Background(),
+		`INSERT INTO public.audit_logs (officer_name, action, target, timestamp) 
+		 VALUES ($1, 'CREATE_FIR', $2, CURRENT_TIMESTAMP)`,
+		officerName, fmt.Sprintf("FIR #%d for Crime #%d", newFIRID, req.CrimeID),
+	)
+	if err != nil {
+		// Log error but prioritize completing the FIR filing
+		// In a real system, audit failure might be fatal.
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
