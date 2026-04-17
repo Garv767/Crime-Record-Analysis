@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Fragment } from "react";
-import { getOffenders, Offender } from "../../lib/api";
+import { getOffenders, getCrimes, linkOffenderToCrime, Offender, Crime } from "../../lib/api";
 import SQLFooter from "../components/SQLFooter";
 
 // Returns a threat level label + badge class based on prior convictions
@@ -25,17 +25,51 @@ ORDER BY prior_convictions DESC;`;
 
 export default function OffendersPage() {
   const [offenders, setOffenders] = useState<Offender[]>([]);
+  const [crimes, setCrimes] = useState<Crime[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Track which row is expanded (null = none)
+  
+  // Link state
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [selectedCrimeId, setSelectedCrimeId] = useState<number | "">("");
+  const [selectedRole, setSelectedRole] = useState("Primary Suspect");
+  const [linking, setLinking] = useState(false);
+
+  const fetchInit = async () => {
+    try {
+      setLoading(true);
+      const [ofs, crs] = await Promise.all([getOffenders(), getCrimes()]);
+      setOffenders(ofs);
+      setCrimes(crs);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    getOffenders()
-      .then(setOffenders)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+    fetchInit();
   }, []);
+
+  const handleLink = async (offenderId: number) => {
+    if (!selectedCrimeId) return;
+    setLinking(true);
+    try {
+      await linkOffenderToCrime({
+        crime_id: Number(selectedCrimeId),
+        offender_id: offenderId,
+        role: selectedRole
+      });
+      alert("Successfully linked offender to incident.");
+      fetchInit(); // Refresh list to get updated count
+      setExpanded(null); // Close panel
+    } catch (e: any) {
+      alert("Error linking: " + e.message);
+    } finally {
+      setLinking(false);
+    }
+  };
 
   if (loading) return <div className="state-loading">Loading offender registry...</div>;
   if (error)   return <div className="state-empty" style={{ color: "var(--accent)" }}>Error: {error}</div>;
@@ -119,6 +153,54 @@ export default function OffendersPage() {
                             <div className="label mb-1">Offender ID</div>
                             <div className="mono accent-text">#{o.offender_id}</div>
                           </div>
+                        </div>
+
+                        {/* Link to Incident Form */}
+                        <div className="mt-6 pt-6 border-t border-border-dim">
+                          <div className="label mb-3 text-accent flex items-center gap-2">
+                            Link to Incident
+                          </div>
+                          <div className="flex flex-wrap items-end gap-4">
+                            <div className="flex-1 min-w-[200px]">
+                              <label className="form-label" style={{ fontSize: '0.65rem' }}>Select Incident</label>
+                              <select 
+                                className="form-select w-full"
+                                value={selectedCrimeId}
+                                onChange={e => setSelectedCrimeId(e.target.value ? Number(e.target.value) : "")}
+                              >
+                                <option value="">— Select Incident —</option>
+                                {crimes.map(c => (
+                                  <option key={c.crime_id} value={c.crime_id}>
+                                    #{c.crime_id} · {c.crime_type} ({c.area_name})
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="w-[180px]">
+                              <label className="form-label" style={{ fontSize: '0.65rem' }}>Role</label>
+                              <select 
+                                className="form-select w-full"
+                                value={selectedRole}
+                                onChange={e => setSelectedRole(e.target.value)}
+                              >
+                                <option value="Primary Suspect">Primary Suspect</option>
+                                <option value="Accomplice">Accomplice</option>
+                                <option value="Witness">Witness</option>
+                                <option value="Mastermind">Mastermind</option>
+                              </select>
+                            </div>
+                            <button 
+                              className="btn btn-primary"
+                              disabled={linking || !selectedCrimeId}
+                              onClick={() => handleLink(o.offender_id)}
+                              style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", height: "36px" }}
+                            >
+                              {linking ? "Linking..." : "Establish Link"}
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-dim mt-3 italic">
+                              * Linkage actions are recorded in the central audit registry.
+                          </p>
                         </div>
                       </td>
                     </tr>

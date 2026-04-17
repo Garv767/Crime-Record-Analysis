@@ -131,3 +131,10 @@ type AuditLog struct {
 	Timestamp   string `json:"timestamp"`
 	IPAddress   string `json:"ip_address"`
 }
+
+// LinkOffenderRequest is the payload accepted by POST /api/offenders/link.
+type LinkOffenderRequest struct {
+	CrimeID    int    `json:"crime_id"`
+	OffenderID int    `json:"offender_id"`
+	Role       string `json:"role"`
+}

@@ -41,6 +41,12 @@ export interface Offender {
   linked_crimes_count: number;
 }
 
+export interface LinkOffenderPayload {
+  crime_id: number;
+  offender_id: number;
+  role: string;
+}
+
 export interface Hotspot {
   location_id: number;
   area_name: string;
@@ -127,6 +133,11 @@ export const createCrime = (payload: { crime_type: string; description: string; 
   });
 
 export const getOffenders = () => apiFetch<Offender[]>("/api/offenders");
+export const linkOffenderToCrime = (payload: LinkOffenderPayload) =>
+  apiFetch<{ message: string }>("/api/offenders/link", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 export const getHotspots = () => apiFetch<Hotspot[]>("/api/hotspots");
 
