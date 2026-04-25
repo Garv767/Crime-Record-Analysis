@@ -15,7 +15,7 @@
 <details>
   <summary><b>Analytics</b></summary>
   <br>
-  <img src="docs/Analytics.png" alt="Analytics">
+  <img src="docs/analytics.png" alt="Analytics">
 </details>
 
 <details>
