@@ -24,11 +24,12 @@ jobs:
           fi
           # Execute an upsert query to update a record, keeping the database active
           psql "$DATABASE_URL" -c "
-            CREATE TABLE IF NOT EXISTS public.keep_alive (
+            DROP TABLE IF EXISTS public.keep_alive;
+            CREATE TABLE public.keep_alive (
               id INT PRIMARY KEY,
-              last_ping TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+              last_ping TIMESTAMP DEFAULT (timezone('Asia/Kolkata', now()))
             );
             INSERT INTO public.keep_alive (id, last_ping)
-            VALUES (1, NOW())
+            VALUES (1, timezone('Asia/Kolkata', now()))
             ON CONFLICT (id) DO UPDATE SET last_ping = EXCLUDED.last_ping;
           "
