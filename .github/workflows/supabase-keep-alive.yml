@@ -1,0 +1,30 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Run every day at 00:00 UTC to keep the database active
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || vars.DATABASE_URL || secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Error: DATABASE_URL secret is not set."
+            exit 1
+          fi
+          # Execute an upsert query to update a record, keeping the database active
+          psql "$DATABASE_URL" -c "
+            CREATE TABLE IF NOT EXISTS public.keep_alive (
+              id INT PRIMARY KEY,
+              last_ping TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            );
+            INSERT INTO public.keep_alive (id, last_ping)
+            VALUES (1, NOW())
+            ON CONFLICT (id) DO UPDATE SET last_ping = EXCLUDED.last_ping;
+          "
