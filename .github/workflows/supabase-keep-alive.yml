@@ -27,9 +27,9 @@ jobs:
             DROP TABLE IF EXISTS public.keep_alive;
             CREATE TABLE public.keep_alive (
               id INT PRIMARY KEY,
-              last_ping TIMESTAMP DEFAULT (timezone('Asia/Kolkata', now()))
+              last_ping TEXT
             );
             INSERT INTO public.keep_alive (id, last_ping)
-            VALUES (1, timezone('Asia/Kolkata', now()))
+            VALUES (1, to_char(timezone('Asia/Kolkata', now()), 'YYYY-MM-DD HH12:MI:SS AM') || ' IST')
             ON CONFLICT (id) DO UPDATE SET last_ping = EXCLUDED.last_ping;
           "
