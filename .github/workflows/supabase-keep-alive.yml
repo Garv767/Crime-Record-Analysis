@@ -9,6 +9,7 @@ on:
 jobs:
   ping-db:
     runs-on: ubuntu-latest
+    environment: CRPA
     steps:
       - name: Ping Supabase Database
         env:
