@@ -21,7 +21,7 @@ func GetCrimes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Base query: JOIN crimes with locations to include area context
+	// Base query: JOIN CRPA_crimes with locations to include area context
 	query := `
 		SELECT
 			c.crime_id,
@@ -31,8 +31,8 @@ func GetCrimes(w http.ResponseWriter, r *http.Request) {
 			COALESCE(c.location_id, 0) AS location_id,
 			COALESCE(l.area_name, 'Unknown') AS area_name,
 			COALESCE(l.risk_level, 0) AS risk_level
-		FROM public.crimes c
-		LEFT JOIN public.locations l ON c.location_id = l.location_id
+		FROM public.CRPA_crimes c
+		LEFT JOIN public.CRPA_locations l ON c.location_id = l.location_id
 	`
 
 	// Apply optional crime type filter
@@ -82,7 +82,7 @@ func GetCrimeTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `SELECT DISTINCT crime_type FROM public.crimes ORDER BY crime_type ASC`
+	query := `SELECT DISTINCT crime_type FROM public.CRPA_crimes ORDER BY crime_type ASC`
 	rows, err := conn.Query(context.Background(), query)
 	if err != nil {
 		http.Error(w, `{"error":"query failed"}`, http.StatusInternalServerError)
@@ -129,7 +129,7 @@ func CreateCrime(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := `
-		INSERT INTO public.crimes (crime_type, description, location_id, occurrence_timestamp)
+		INSERT INTO public.CRPA_crimes (crime_type, description, location_id, occurrence_timestamp)
 		VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
 		RETURNING crime_id, occurrence_timestamp
 	`

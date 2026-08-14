@@ -12,7 +12,7 @@ const SQL_QUERY = `SELECT
   v.age, 
   v.contact_no, 
   v.address 
-FROM public.victims v 
+FROM public.CRPA_victims v 
 ORDER BY v.victim_id DESC;`;
 
 export default function VictimRegistry() {

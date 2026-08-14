@@ -12,7 +12,7 @@ const SQL_QUERY = `SELECT
   o.badge_number, 
   o.rank, 
   o.station 
-FROM public.police_officers o 
+FROM public.CRPA_police_officers o 
 ORDER BY o.rank DESC, o.name ASC;`;
 
 export default function PoliceDirectory() {
@@ -174,7 +174,7 @@ export default function PoliceDirectory() {
               &nbsp;&nbsp;count(f.fir_id) as case_load<br/>
               FROM officers o<br/>
               JOIN stations s ON o.station_id = s.id<br/>
-              LEFT JOIN fir_records f ON o.id = f.officer_id<br/>
+              LEFT JOIN CRPA_fir_records f ON o.id = f.officer_id<br/>
               GROUP BY o.id, s.station_name;
             </div>
           </div>

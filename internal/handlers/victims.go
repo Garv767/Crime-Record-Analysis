@@ -18,7 +18,7 @@ func GetVictims(w http.ResponseWriter, r *http.Request) {
 
 	query := `
 		SELECT victim_id, name, age, contact_no, address
-		FROM public.victims
+		FROM public.CRPA_victims
 		ORDER BY victim_id DESC
 	`
 
@@ -72,7 +72,7 @@ func CreateVictim(w http.ResponseWriter, r *http.Request) {
 
 	// Check if already exist by Contact number (simplistic check to prevent duplicate logic)
 	var existingId int
-	err := pool.QueryRow(r.Context(), "SELECT victim_id FROM public.victims WHERE contact_no = $1 AND contact_no != '' LIMIT 1", payload.ContactNo).Scan(&existingId)
+	err := pool.QueryRow(r.Context(), "SELECT victim_id FROM public.CRPA_victims WHERE contact_no = $1 AND contact_no != '' LIMIT 1", payload.ContactNo).Scan(&existingId)
 	if err == nil {
 		// Found existing
 		payload.VictimID = existingId
@@ -83,7 +83,7 @@ func CreateVictim(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := `
-		INSERT INTO public.victims (name, age, contact_no, address)
+		INSERT INTO public.CRPA_victims (name, age, contact_no, address)
 		VALUES ($1, $2, $3, $4)
 		RETURNING victim_id
 	`

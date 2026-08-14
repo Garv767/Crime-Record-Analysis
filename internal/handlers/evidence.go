@@ -19,7 +19,7 @@ func GetEvidence(w http.ResponseWriter, r *http.Request) {
 
 	query := `
 		SELECT evidence_id, crime_id, description, collected_by, collection_date, status
-		FROM public.evidence
+		FROM public.CRPA_evidence
 		ORDER BY collection_date DESC
 	`
 
@@ -71,7 +71,7 @@ func CreateEvidence(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := `
-		INSERT INTO public.evidence (crime_id, description, collected_by, status)
+		INSERT INTO public.CRPA_evidence (crime_id, description, collected_by, status)
 		VALUES ($1, $2, $3, $4)
 		RETURNING evidence_id, collection_date
 	`

@@ -20,13 +20,13 @@ SELECT
   f.fir_id, f.fir_date, f.status, 
   c.crime_type, l.area_name,
   o.name as officer_name
-FROM public.fir_records f
-JOIN public.crimes c ON f.crime_id = c.crime_id
-JOIN public.locations l ON c.location_id = l.location_id
-JOIN public.police_officers o ON f.officer_id = o.officer_id;
+FROM public.CRPA_fir_records f
+JOIN public.CRPA_crimes c ON f.crime_id = c.crime_id
+JOIN public.CRPA_locations l ON c.location_id = l.location_id
+JOIN public.CRPA_police_officers o ON f.officer_id = o.officer_id;
 
 -- Updating FIR status
-UPDATE public.fir_records 
+UPDATE public.CRPA_fir_records 
 SET status = $1 
 WHERE fir_id = $2;`;
 

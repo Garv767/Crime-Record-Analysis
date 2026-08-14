@@ -34,8 +34,8 @@ func GetHotspots(w http.ResponseWriter, r *http.Request) {
 			COALESCE(l.latitude, 0.0) AS latitude,
 			COALESCE(l.longitude, 0.0) AS longitude,
 			COUNT(c.crime_id) AS crime_count
-		FROM public.locations l
-		INNER JOIN public.crimes c ON l.location_id = c.location_id
+		FROM public.CRPA_locations l
+		INNER JOIN public.CRPA_crimes c ON l.location_id = c.location_id
 		GROUP BY l.location_id
 		ORDER BY crime_count DESC
 	`

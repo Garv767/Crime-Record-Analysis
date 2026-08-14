@@ -22,8 +22,8 @@ const SQL_QUERY = `SELECT
   l.longitude, 
   l.risk_level, 
   count(c.crime_id) as incident_count 
-FROM public.locations l 
-LEFT JOIN public.crimes c ON l.location_id = c.location_id 
+FROM public.CRPA_locations l 
+LEFT JOIN public.CRPA_crimes c ON l.location_id = c.location_id 
 GROUP BY l.location_id 
 ORDER BY incident_count DESC;`;
 

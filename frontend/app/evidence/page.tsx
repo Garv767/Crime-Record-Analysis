@@ -12,7 +12,7 @@ const SQL_QUERY = `SELECT
   e.description, 
   e.collection_date, 
   e.status 
-FROM public.evidence e 
+FROM public.CRPA_evidence e 
 ORDER BY e.collection_date DESC;`;
 
 export default function EvidenceManagement() {

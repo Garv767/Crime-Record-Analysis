@@ -30,8 +30,8 @@ const SQL_QUERY = `SELECT
   c.description, 
   l.area_name, 
   l.risk_level 
-FROM public.crimes c 
-LEFT JOIN public.locations l ON c.location_id = l.location_id 
+FROM public.CRPA_crimes c 
+LEFT JOIN public.CRPA_locations l ON c.location_id = l.location_id 
 ORDER BY c.occurrence_timestamp DESC;`;
 
 export default function CrimesPage() {

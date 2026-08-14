@@ -18,7 +18,7 @@ const SQL_QUERY = `SELECT
   o.age, 
   o.previous_crimes_count as prior_convictions, 
   count(ol.crime_id) as active_links 
-FROM public.offenders o 
+FROM public.CRPA_offenders o 
 LEFT JOIN public.offender_links ol ON o.offender_id = ol.offender_id 
 GROUP BY o.offender_id 
 ORDER BY prior_convictions DESC;`;

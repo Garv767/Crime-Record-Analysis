@@ -24,7 +24,7 @@ func GetLocations(w http.ResponseWriter, r *http.Request) {
 	rows, err := conn.Query(
 		context.Background(),
 		`SELECT location_id, area_name, city, zone, risk_level, latitude, longitude
-		 FROM public.locations
+		 FROM public.CRPA_locations
 		 ORDER BY risk_level DESC`,
 	)
 	if err != nil {

@@ -18,7 +18,7 @@ const SQL_QUERY = `SELECT
   count(*) as frequency, 
   EXTRACT(HOUR FROM occurrence_timestamp) as hour_of_day,
   date_trunc('month', occurrence_timestamp) as incident_month 
-FROM public.crimes 
+FROM public.CRPA_crimes 
 GROUP BY 1, 3, 4 
 ORDER BY incident_month DESC, frequency DESC;`;
 

@@ -18,7 +18,7 @@ func GetOfficers(w http.ResponseWriter, r *http.Request) {
 
 	query := `
 		SELECT officer_id, name, badge_number, rank, station
-		FROM public.police_officers
+		FROM public.CRPA_police_officers
 		ORDER BY rank, name
 	`
 
@@ -69,7 +69,7 @@ func CreateOfficer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := `
-		INSERT INTO public.police_officers (name, badge_number, rank, station)
+		INSERT INTO public.CRPA_police_officers (name, badge_number, rank, station)
 		VALUES ($1, $2, $3, $4)
 		RETURNING officer_id
 	`

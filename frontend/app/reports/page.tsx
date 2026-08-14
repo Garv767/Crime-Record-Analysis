@@ -17,7 +17,7 @@ const SQL_QUERY = `SELECT
   date_trunc('month', occurrence_timestamp) as report_month,
   count(*) as total_incidents,
   crime_type 
-FROM public.crimes 
+FROM public.CRPA_crimes 
 GROUP BY 1, 3 
 ORDER BY report_month DESC;`;
 

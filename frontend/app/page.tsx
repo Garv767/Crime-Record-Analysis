@@ -36,9 +36,9 @@ const CHART_COLORS = ["#e63946", "#e68e1b", "#4ea8de", "#43a047", "#9c27b0", "#f
 
 const SQL_QUERY = `SELECT 
   count(crime_id) as total_incidents,
-  (SELECT count(*) FROM offenders) as known_offenders,
+  (SELECT count(*) FROM CRPA_offenders) as known_offenders,
   (SELECT count(*) FROM hotspots WHERE risk_level >= 7) as high_risk_zones
-FROM crimes;`;
+FROM CRPA_crimes;`;
 
 export default function Dashboard() {
   const [crimes, setCrimes] = useState<Crime[]>([]);
@@ -194,9 +194,9 @@ export default function Dashboard() {
               <span className="text-dim">// Aggregating live city-wide metrics</span><br/>
               SELECT <br/>
               &nbsp;&nbsp;count(crime_id) as total,<br/>
-              &nbsp;&nbsp;(SELECT count(*) FROM offenders WHERE previous_crimes &gt; 0) as repeat,<br/>
+              &nbsp;&nbsp;(SELECT count(*) FROM CRPA_offenders WHERE previous_crimes &gt; 0) as repeat,<br/>
               &nbsp;&nbsp;(SELECT count(*) FROM hotspots WHERE risk_level &gt;= 7) as high_risk<br/>
-              FROM crimes;
+              FROM CRPA_crimes;
             </div>
           </div>
 

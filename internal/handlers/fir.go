@@ -18,7 +18,7 @@ import (
 //
 // This handler demonstrates proper transactional database logic:
 //  1. Begin a transaction
-//  2. Insert a new record into fir_records
+//  2. Insert a new record into CRPA_fir_records
 //  3. Update the corresponding crime's status
 //  4. Commit — or rollback on any failure
 //
@@ -61,7 +61,7 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 	var newFIRID int
 	err = tx.QueryRow(
 		context.Background(),
-		`INSERT INTO public.fir_records (crime_id, officer_id, fir_date, status)
+		`INSERT INTO public.CRPA_fir_records (crime_id, officer_id, fir_date, status)
 		 VALUES ($1, $2, CURRENT_DATE, $3)
 		 RETURNING fir_id`,
 		req.CrimeID, req.OfficerID, req.Status,
@@ -80,7 +80,7 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 	var officerName string
 	err = tx.QueryRow(
 		context.Background(),
-		`SELECT name FROM public.police_officers WHERE officer_id = $1`,
+		`SELECT name FROM public.CRPA_police_officers WHERE officer_id = $1`,
 		req.OfficerID,
 	).Scan(&officerName)
 	if err != nil {
@@ -93,7 +93,7 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 		// Check if victim exists by contact number
 		err := tx.QueryRow(
 			context.Background(),
-			`SELECT victim_id FROM public.victims WHERE contact_no = $1 LIMIT 1`,
+			`SELECT victim_id FROM public.CRPA_victims WHERE contact_no = $1 LIMIT 1`,
 			req.VictimContact,
 		).Scan(&victimID)
 
@@ -101,14 +101,14 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 			// Insert new victim
 			err = tx.QueryRow(
 				context.Background(),
-				`INSERT INTO public.victims (name, age, contact_no, address) VALUES ($1, $2, $3, $4) RETURNING victim_id`,
+				`INSERT INTO public.CRPA_victims (name, age, contact_no, address) VALUES ($1, $2, $3, $4) RETURNING victim_id`,
 				req.VictimName, req.VictimAge, req.VictimContact, req.VictimAddress,
 			).Scan(&victimID)
 		}
 
 		if err == nil {
 			// Link victim to the incident (Crime record)
-			_, err = tx.Exec(context.Background(), `UPDATE public.crimes SET victim_id = $1 WHERE crime_id = $2`, victimID, req.CrimeID)
+			_, err = tx.Exec(context.Background(), `UPDATE public.CRPA_crimes SET victim_id = $1 WHERE crime_id = $2`, victimID, req.CrimeID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to link victim to incident: `+err.Error()+`"}`, http.StatusInternalServerError)
 				return
@@ -119,7 +119,7 @@ func CreateFIR(w http.ResponseWriter, r *http.Request) {
 	// Step 4: Write Audit Log for Technical Accountability
 	_, err = tx.Exec(
 		context.Background(),
-		`INSERT INTO public.audit_logs (officer_name, action, target, timestamp) 
+		`INSERT INTO public.CRPA_audit_logs (officer_name, action, target, timestamp) 
 		 VALUES ($1, 'CREATE_FIR', $2, CURRENT_TIMESTAMP)`,
 		officerName, fmt.Sprintf("FIR #%d for Crime #%d", newFIRID, req.CrimeID),
 	)
@@ -157,12 +157,12 @@ func GetFIRs(w http.ResponseWriter, r *http.Request) {
 			l.area_name,
 			o.name as officer_name, o.badge_number,
 			COALESCE(STRING_AGG(off.name, ', '), '') as linked_offenders
-		FROM public.fir_records f
-		JOIN public.crimes c ON f.crime_id = c.crime_id
-		JOIN public.locations l ON c.location_id = l.location_id
-		JOIN public.police_officers o ON f.officer_id = o.officer_id
-		LEFT JOIN public.crime_offender co ON c.crime_id = co.crime_id
-		LEFT JOIN public.offenders off ON co.offender_id = off.offender_id
+		FROM public.CRPA_fir_records f
+		JOIN public.CRPA_crimes c ON f.crime_id = c.crime_id
+		JOIN public.CRPA_locations l ON c.location_id = l.location_id
+		JOIN public.CRPA_police_officers o ON f.officer_id = o.officer_id
+		LEFT JOIN public.CRPA_crime_offender co ON c.crime_id = co.crime_id
+		LEFT JOIN public.CRPA_offenders off ON co.offender_id = off.offender_id
 		GROUP BY f.fir_id, c.crime_id, l.location_id, o.officer_id
 		ORDER BY f.fir_date DESC, f.fir_id DESC
 	`
@@ -222,7 +222,7 @@ func UpdateFIRStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = conn.Exec(context.Background(), `UPDATE public.fir_records SET status = $1 WHERE fir_id = $2`, req.Status, firID)
+	_, err = conn.Exec(context.Background(), `UPDATE public.CRPA_fir_records SET status = $1 WHERE fir_id = $2`, req.Status, firID)
 	if err != nil {
 		http.Error(w, `{"error":"failed to update status"}`, http.StatusInternalServerError)
 		return

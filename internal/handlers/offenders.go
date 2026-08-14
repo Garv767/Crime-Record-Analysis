@@ -32,8 +32,8 @@ func GetOffenders(w http.ResponseWriter, r *http.Request) {
 			COALESCE(o.address, '') AS address,
 			COALESCE(o.previous_crimes_count, 0) AS previous_crimes_count,
 			COUNT(co.crime_id) AS linked_crimes_count
-		FROM public.offenders o
-		LEFT JOIN public.crime_offender co ON o.offender_id = co.offender_id
+		FROM public.CRPA_offenders o
+		LEFT JOIN public.CRPA_crime_offender co ON o.offender_id = co.offender_id
 		GROUP BY o.offender_id
 		ORDER BY linked_crimes_count DESC, o.previous_crimes_count DESC
 	`
@@ -95,7 +95,7 @@ func LinkOffenderToCrime(w http.ResponseWriter, r *http.Request) {
 	// Insert the link
 	_, err = tx.Exec(
 		context.Background(),
-		`INSERT INTO public.crime_offender (crime_id, offender_id, role_in_crime) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+		`INSERT INTO public.CRPA_crime_offender (crime_id, offender_id, role_in_crime) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
 		req.CrimeID, req.OffenderID, req.Role,
 	)
 	if err != nil {
@@ -106,7 +106,7 @@ func LinkOffenderToCrime(w http.ResponseWriter, r *http.Request) {
 	// Insert audit log
 	_, err = tx.Exec(
 		context.Background(),
-		`INSERT INTO public.audit_logs (officer_name, action, target, timestamp) 
+		`INSERT INTO public.CRPA_audit_logs (officer_name, action, target, timestamp) 
 		 VALUES ($1, 'IDENTIFY_OFFENDER', $2, CURRENT_TIMESTAMP)`,
 		"System", fmt.Sprintf("Linked Offender #%d to Crime #%d", req.OffenderID, req.CrimeID),
 	)
