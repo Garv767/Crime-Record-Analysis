@@ -15,9 +15,9 @@ export default function ClientShell({ children }: ClientShellProps) {
   return (
     <div className="app-shell">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full min-w-0 overflow-x-hidden">
         <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
-        <main className="main-content">{children}</main>
+        <main className="main-content min-w-0">{children}</main>
       </div>
     </div>
   );

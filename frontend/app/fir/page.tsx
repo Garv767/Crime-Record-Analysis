@@ -280,22 +280,22 @@ function FIRContent() {
                   return (
                     <div key={fir.fir_id} className="border border-border bg-surface overflow-hidden transition-all">
                       <div 
-                        className={`p-4 flex items-center justify-between cursor-pointer hover:bg-bg-hover ${isExpanded ? 'bg-bg-hover' : ''}`}
+                        className={`p-3 sm:p-4 flex items-center justify-between cursor-pointer hover:bg-bg-hover ${isExpanded ? 'bg-bg-hover' : ''}`}
                         onClick={() => setExpandedFirId(isExpanded ? null : fir.fir_id)}
                       >
-                        <div className="flex items-center gap-6">
-                          <div className="mono text-accent font-bold">#{fir.fir_id}</div>
+                        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+                          <div className="mono text-accent font-bold shrink-0">#{fir.fir_id}</div>
                           <div className="hidden sm:block">
                             <div className="text-[10px] uppercase text-dim mono mb-0.5">Incident Type</div>
-                            <div className="text-sm font-bold">{fir.crime_type}</div>
+                            <div className="text-sm font-bold truncate">{fir.crime_type}</div>
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <div className="text-[10px] uppercase text-dim mono mb-0.5">Area</div>
-                            <div className="text-sm font-bold">{fir.area_name}</div>
+                            <div className="text-sm font-bold truncate">{fir.area_name}</div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`badge ${
+                        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                          <span className={`badge text-[10px] sm:text-xs ${
                             fir.status === 'Open' ? 'badge-low' : 
                             fir.status === 'Under Investigation' ? 'badge-medium' : 
                             'badge-high'
@@ -307,7 +307,7 @@ function FIRContent() {
                       </div>
 
                       {isExpanded && (
-                        <div className="p-6 border-t border-border-dim grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-200">
+                        <div className="p-4 sm:p-6 border-t border-border-dim grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 animate-in fade-in duration-200">
                           <div className="space-y-4">
                             <div className="flex items-start gap-3">
                               <Calendar className="text-accent mt-1" size={14} />

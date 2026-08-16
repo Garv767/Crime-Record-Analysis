@@ -83,8 +83,8 @@ export default function Analytics() {
 
       <div className="grid grid-cols-1 gap-8">
         {/* Main Chart Section */}
-        <div className="border border-border bg-surface p-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="border border-border bg-surface p-4 sm:p-6 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-6">
             <div className="label text-accent flex items-center gap-2">
               <TrendingUp size={14} />
               Crime Frequency Analysis // 6-Month Trend
@@ -92,7 +92,7 @@ export default function Analytics() {
             <div className="text-[10px] text-dim font-mono uppercase">Live Model: AR-X7</div>
           </div>
           
-          <div className="h-[300px] w-full">
+          <div className="h-[260px] sm:h-[300px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
                 <defs>
@@ -138,12 +138,12 @@ export default function Analytics() {
 
         {/* Lower Grid: Modular visualisations */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="border border-border bg-surface p-6">
+          <div className="border border-border bg-surface p-4 sm:p-6 min-w-0">
             <div className="label mb-6 flex justify-between uppercase tracking-widest text-[10px]">
               <span>Risk Category Distribution</span>
               <span className="font-mono text-secondary text-[10px]">SELECT count(*) BY type</span>
             </div>
-            <div className="h-[200px]">
+            <div className="h-[200px] min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={riskDistribution}>
                   <XAxis dataKey="name" tick={{fontSize: 10, fill: 'var(--text-secondary)'}} />
@@ -163,13 +163,13 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="border border-border bg-surface p-6">
+          <div className="border border-border bg-surface p-4 sm:p-6 min-w-0">
             <div className="label mb-6 flex justify-between text-accent uppercase tracking-widest text-[10px]">
               <span className="flex items-center gap-2"><Clock size={14}/> Time-Of-Day Density</span>
             </div>
-            <div className="h-[200px]">
+            <div className="h-[200px] min-w-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={timeBlocks} layout="vertical" margin={{ left: 30 }}>
+                <BarChart data={timeBlocks} layout="vertical" margin={{ left: 10 }}>
                   <XAxis type="number" hide />
                   <YAxis type="category" dataKey="label" tick={{fontSize: 10, fill: 'var(--text-secondary)'}} axisLine={false} tickLine={false} />
                   <Tooltip 
@@ -188,25 +188,27 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="border border-border bg-surface p-6">
+          <div className="border border-border bg-surface p-4 sm:p-6 min-w-0">
             <div className="label mb-6 flex justify-between uppercase tracking-widest text-[10px]">
               <span className="flex items-center gap-2"><Repeat size={14}/> Offender Recidivism Impact</span>
             </div>
-            <div className="h-[200px] flex items-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={recidivismData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    <Cell fill="#e63946" />
-                    <Cell fill="#3a3a42" />
-                  </Pie>
-                  <Tooltip 
-                    wrapperClassName="custom-tooltip"
-                    contentStyle={{background: '#1a1a1e', border: '1px solid var(--accent)', fontSize: '13px', color: 'var(--accent-hover)'}}
-                    itemStyle={{color: 'var(--accent-hover)'}}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="ml-4 flex flex-col gap-2 w-1/2">
+            <div className="min-h-[200px] flex flex-col sm:flex-row items-center gap-4">
+              <div className="w-full sm:w-1/2 h-[180px] min-w-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={recidivismData} innerRadius={45} outerRadius={65} paddingAngle={5} dataKey="value">
+                      <Cell fill="#e63946" />
+                      <Cell fill="#3a3a42" />
+                    </Pie>
+                    <Tooltip 
+                      wrapperClassName="custom-tooltip"
+                      contentStyle={{background: '#1a1a1e', border: '1px solid var(--accent)', fontSize: '13px', color: 'var(--accent-hover)'}}
+                      itemStyle={{color: 'var(--accent-hover)'}}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex flex-col gap-2 w-full sm:w-1/2">
                 <div className="text-[12px]"><span className="text-accent font-bold text-lg">{recidivismData[0].value}</span> Repeat Cases</div>
                 <div className="text-[10px] text-secondary leading-relaxed">Repeat offenders account for approx 35% of overall regional risk velocity.</div>
               </div>

@@ -76,22 +76,22 @@ export default function ReportingEngine() {
         <div className="flex flex-col gap-6 w-full">
           <div className="border border-border bg-white text-black min-h-[600px] flex flex-col">
             {/* Document Header */}
-            <div className="p-8 border-b border-gray-200">
-              <div className="flex justify-between items-start">
+            <div className="p-4 sm:p-8 border-b border-gray-200">
+              <div className="flex justify-between items-start gap-4">
                 <div>
                   <div className="text-[10px] font-bold tracking-widest uppercase mb-1">State of Tamil Nadu</div>
-                  <div className="text-xl font-bold uppercase tracking-tight">Chennai Metropolitan Police</div>
+                  <div className="text-lg sm:text-xl font-bold uppercase tracking-tight">Chennai Metropolitan Police</div>
                   <div className="text-[11px] text-gray-500 font-serif italic mt-1 font-bold">Standard Form No. CRPA-09 // {selectedTemplate.id}</div>
                 </div>
-                <div className="w-12 h-12 border-2 border-black flex items-center justify-center font-bold text-xs">OFFICIAL</div>
+                <div className="w-12 h-12 border-2 border-black flex items-center justify-center font-bold text-xs shrink-0">OFFICIAL</div>
               </div>
             </div>
 
             {/* Document Body */}
-            <div className="p-8 flex-1 font-serif text-[13px] leading-relaxed">
-              <div className="mb-6 font-bold text-lg text-center underline decoration-2 underline-offset-4">{selectedTemplate.name.toUpperCase()}</div>
+            <div className="p-4 sm:p-8 flex-1 font-serif text-[13px] leading-relaxed">
+              <div className="mb-6 font-bold text-base sm:text-lg text-center underline decoration-2 underline-offset-4">{selectedTemplate.name.toUpperCase()}</div>
               
-              <div className="grid grid-cols-[120px,1fr] gap-y-2 mb-8 text-black">
+              <div className="grid grid-cols-1 sm:grid-cols-[120px,1fr] gap-y-2 gap-x-4 mb-8 text-black">
                 <div className="font-bold">Prepared At:</div> <div>Chennai Intelligence HQ</div>
                 <div className="font-bold">Date:</div> <div>{new Date().toLocaleDateString('en-GB')}</div>
                 <div className="font-bold">Classification:</div> <div className="text-red-600 font-bold">RESTRICTED // INTERNAL USE ONLY</div>
@@ -117,12 +117,12 @@ export default function ReportingEngine() {
                   "The analysis indicates {crimeCount} total records in the current database. The latest recorded incident {recentCrime ? `is classified as ${recentCrime.crime_type} occurring at ${recentCrime.area_name}` : "is pending synchronization"}."
                 </div>
 
-                <div className="mt-12 pt-8 border-t-2 border-dotted border-gray-300 flex justify-between">
-                  <div className="text-center w-40">
+                <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-dotted border-gray-300 flex flex-col sm:flex-row justify-between gap-6">
+                  <div className="text-center w-full sm:w-40">
                     <div className="border-b border-black mb-1"></div>
                     <div className="text-[10px] font-bold uppercase">Authorized Signatory</div>
                   </div>
-                  <div className="text-center w-40">
+                  <div className="text-center w-full sm:w-40">
                     <div className="border-b border-black mb-1"></div>
                     <div className="text-[10px] font-bold uppercase">System Verification Hash</div>
                   </div>
@@ -130,11 +130,11 @@ export default function ReportingEngine() {
               </div>
             </div>
 
-            <div className="bg-bg-base border-t border-border p-3 flex justify-between items-center text-primary h-hidden">
+            <div className="bg-bg-base border-t border-border p-3 flex justify-between items-center text-primary">
               <div className="flex gap-2">
-                <button onClick={() => window.print()} className="p-2 border border-border hover:bg-surface"><Download size={14} /></button>
-                <button onClick={() => window.print()} className="p-2 border border-border hover:bg-surface"><Printer size={14} /></button>
-                <button className="p-2 border border-border hover:bg-surface"><Share2 size={14} /></button>
+                <button onClick={() => window.print()} className="p-2 border border-border hover:bg-surface" aria-label="Download report"><Download size={14} /></button>
+                <button onClick={() => window.print()} className="p-2 border border-border hover:bg-surface" aria-label="Print report"><Printer size={14} /></button>
+                <button className="p-2 border border-border hover:bg-surface" aria-label="Share report"><Share2 size={14} /></button>
               </div>
               <div className="text-[10px] font-mono text-dim">GENERATING DOCUMENT... [OK]</div>
             </div>

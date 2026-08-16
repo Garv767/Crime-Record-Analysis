@@ -139,8 +139,8 @@ export default function OffendersPage() {
                   {/* Expandable detail row */}
                   {isOpen && (
                     <tr key={`${o.offender_id}-detail`} style={{ background: "var(--bg-row)" }}>
-                      <td colSpan={7} style={{ padding: "1.5rem", borderTop: "1px solid var(--border-dim)" }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
+                      <td colSpan={7} className="p-4 sm:p-6 border-t border-border-dim">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                           <div>
                             <div className="label mb-1">Full Name</div>
                             <div style={{ fontWeight: 600 }}>{o.name}</div>
@@ -157,12 +157,12 @@ export default function OffendersPage() {
 
                         {/* Link to Incident Form */}
                         <div className="mt-6 pt-6 border-t border-border-dim">
-                          <div className="p-4 bg-black/20 rounded border border-border-dim">
+                          <div className="p-4 bg-black/20 border border-border-dim">
                             <div className="label mb-4 text-accent flex items-center gap-2">
                               Link to Incident
                             </div>
-                            <div className="flex flex-wrap items-end gap-6">
-                              <div className="flex-1 min-w-[200px]">
+                            <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+                              <div className="flex-1 min-w-0">
                                 <label className="form-label" style={{ fontSize: '0.65rem' }}>Select Incident</label>
                                 <select 
                                   className="form-select w-full"
@@ -177,7 +177,7 @@ export default function OffendersPage() {
                                   ))}
                                 </select>
                               </div>
-                              <div className="w-[180px]">
+                              <div className="w-full sm:w-[180px]">
                                 <label className="form-label" style={{ fontSize: '0.65rem' }}>Role</label>
                                 <select 
                                   className="form-select w-full"
@@ -191,7 +191,7 @@ export default function OffendersPage() {
                                 </select>
                               </div>
                               <button 
-                                className="btn btn-primary"
+                                className="btn btn-primary w-full sm:w-auto justify-center"
                                 disabled={linking || !selectedCrimeId}
                                 onClick={() => handleLink(o.offender_id)}
                                 style={{ padding: "0.5rem 1.5rem", fontSize: "0.8rem", height: "36px" }}

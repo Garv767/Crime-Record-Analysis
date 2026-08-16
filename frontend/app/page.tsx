@@ -140,13 +140,13 @@ export default function Dashboard() {
         </div>
 
         {/* Sidebar content: Chart + SQL Log */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 min-w-0 w-full">
           {/* Crimes by Type Bar Chart */}
-          <div className="w-full">
+          <div className="w-full min-w-0">
             <div className="section-header">
               <span className="section-title">Crimes by Type</span>
             </div>
-            <div className="border border-border p-4 bg-surface">
+            <div className="border border-border p-4 bg-surface min-w-0">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
                   data={crimesByType(crimes)}

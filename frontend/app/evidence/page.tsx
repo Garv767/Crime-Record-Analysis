@@ -80,7 +80,7 @@ export default function EvidenceManagement() {
             <input 
               type="text" 
               placeholder="Search evidence..." 
-              className="form-input max-w-[200px]"
+              className="form-input w-full sm:max-w-[200px]"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -138,7 +138,7 @@ export default function EvidenceManagement() {
 
       {showAdd && (
         <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
-          <form className="bg-surface border border-border w-full max-w-lg p-6" onSubmit={handleCreate}>
+          <form className="modal-dialog p-4 sm:p-6" onSubmit={handleCreate}>
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
               <h2 className="text-lg font-bold uppercase tracking-tight">Catalog Evidence</h2>
               <button type="button" onClick={() => setShowAdd(false)} className="text-secondary hover:text-primary"><X size={18}/></button>
@@ -149,7 +149,7 @@ export default function EvidenceManagement() {
                 <label className="form-label">Description / Item Name</label>
                 <input required className="form-input" value={newEv.description} onChange={e => setNewEv({...newEv, description: e.target.value})} placeholder="e.g. 9mm shell casing" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="form-field">
                   <label className="form-label">Crime ID Link</label>
                   <input required type="number" className="form-input" value={newEv.crime_id || ''} onChange={e => setNewEv({...newEv, crime_id: parseInt(e.target.value) || 0})} placeholder="e.g. 1042" />

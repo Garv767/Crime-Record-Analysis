@@ -85,23 +85,25 @@ export default function PoliceDirectory() {
         <div className="w-full">
           <div className="section-header">
             <span className="section-title">Personnel Roster</span>
-            <div className="flex gap-2 items-center">
+            <div className="flex flex-wrap gap-2 items-center w-full sm:w-auto">
               <input 
                 type="text" 
                 placeholder="Search..." 
-                className="form-input max-w-[150px]"
+                className="form-input flex-1 sm:max-w-[150px] min-w-[110px]"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
-              {["All", "Active", "On Field"].map((f) => (
-                <button 
-                  key={f} 
-                  onClick={() => setFilter(f)}
-                  className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors ${filter === f ? 'bg-accent text-white border-accent' : 'bg-surface border-border text-secondary'}`}
-                >
-                  {f}
-                </button>
-              ))}
+              <div className="flex gap-1.5 shrink-0">
+                {["All", "Active", "On Field"].map((f) => (
+                  <button 
+                    key={f} 
+                    onClick={() => setFilter(f)}
+                    className={`px-2.5 py-1 text-[10px] uppercase font-bold border transition-colors ${filter === f ? 'bg-accent text-white border-accent' : 'bg-surface border-border text-secondary'}`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -185,7 +187,7 @@ export default function PoliceDirectory() {
 
       {showAdd && (
         <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
-          <form className="bg-surface border border-border w-full max-w-lg p-6" onSubmit={handleCreate}>
+          <form className="modal-dialog p-4 sm:p-6" onSubmit={handleCreate}>
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
               <h2 className="text-lg font-bold uppercase tracking-tight">Register Personnel</h2>
               <button type="button" onClick={() => setShowAdd(false)} className="text-secondary hover:text-primary"><X size={18}/></button>
@@ -196,7 +198,7 @@ export default function PoliceDirectory() {
                 <label className="form-label">Full Name</label>
                 <input required className="form-input" value={newOff.name} onChange={e => setNewOff({...newOff, name: e.target.value})} placeholder="e.g. A. Kumar" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="form-field">
                   <label className="form-label">Badge Number</label>
                   <input required type="number" className="form-input" value={newOff.badge_number || ''} onChange={e => setNewOff({...newOff, badge_number: parseInt(e.target.value) || 0})} placeholder="e.g. 2391" />

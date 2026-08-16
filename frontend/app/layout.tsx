@@ -1,10 +1,17 @@
 // frontend/app/layout.tsx
 // Root layout — wraps every page with the responsive shell and metadata.
 // Fonts: Space Grotesk (headings/body) + JetBrains Mono (data/IDs).
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import ClientShell from "./components/ClientShell";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#1a1a1e",
+};
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],

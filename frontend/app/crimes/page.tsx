@@ -215,7 +215,7 @@ export default function CrimesPage() {
       {/* Add Incident Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="bg-surface border border-border w-full max-w-lg shadow-2xl">
+          <div className="modal-dialog">
             <div className="flex justify-between items-center p-6 border-b border-border">
               <h2 className="text-xl font-bold uppercase tracking-tighter">Report New Incident</h2>
               <button onClick={() => setShowAddModal(false)} className="text-dim hover:text-primary">

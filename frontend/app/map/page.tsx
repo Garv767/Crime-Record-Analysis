@@ -47,7 +47,7 @@ export default function MapPage() {
           <p className="page-subtitle">Chennai Metropolitan Area — {hotspots.length} active risk zones</p>
         </div>
         {/* Legend */}
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div className="flex flex-wrap gap-2 items-center">
           <span className="badge badge-high">Risk 7–10</span>
           <span className="badge badge-medium">Risk 4–6</span>
           <span className="badge badge-low">Risk 1–3</span>
@@ -58,8 +58,8 @@ export default function MapPage() {
         <div className="toast toast-error mb-4">Error: {error}. Is the Go API running?</div>
       )}
 
-      {/* Map fills the remaining viewport height */}
-      <div style={{ border: "1px solid var(--border)", height: "calc(100vh - 180px)" }}>
+      {/* Map fills the remaining viewport height on desktop, comfortable height on mobile */}
+      <div className="w-full border border-border min-h-[380px] h-[55vh] md:h-[calc(100vh-220px)]">
         {!loading && <MapView hotspots={hotspots} />}
       </div>
 

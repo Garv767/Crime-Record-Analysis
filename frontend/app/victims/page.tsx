@@ -76,12 +76,12 @@ export default function VictimRegistry() {
         <div className="w-full">
           <div className="section-header">
             <span className="section-title">Protected Records</span>
-            <div className="flex items-center gap-2 bg-surface border border-border px-2 py-1">
-              <Search size={14} className="text-secondary" />
+            <div className="flex items-center gap-2 bg-surface border border-border px-2.5 py-1.5 w-full sm:w-auto">
+              <Search size={14} className="text-secondary shrink-0" />
               <input 
                 type="text" 
                 placeholder="Search..." 
-                className="bg-transparent border-none text-[12px] outline-none text-primary"
+                className="bg-transparent border-none text-[12px] outline-none text-primary w-full sm:w-40"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -147,7 +147,7 @@ export default function VictimRegistry() {
 
       {showAdd && (
         <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
-          <form className="bg-surface border border-border w-full max-w-lg p-6" onSubmit={handleCreate}>
+          <form className="modal-dialog p-4 sm:p-6" onSubmit={handleCreate}>
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
               <h2 className="text-lg font-bold uppercase tracking-tight">Register Victim</h2>
               <button type="button" onClick={() => setShowAdd(false)} className="text-secondary hover:text-primary"><X size={18}/></button>

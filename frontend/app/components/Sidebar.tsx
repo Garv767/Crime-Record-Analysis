@@ -60,7 +60,7 @@ export default function Sidebar({
         </div>
 
       {/* Navigation links */}
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav overflow-y-auto">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           // Mark active: exact match for root, prefix match for others
           const isActive =
@@ -71,6 +71,7 @@ export default function Sidebar({
               key={href}
               href={href}
               className={`sidebar-link ${isActive ? "active" : ""}`}
+              onClick={() => setIsOpen(false)}
             >
               <Icon size={14} strokeWidth={2} />
               {label}
