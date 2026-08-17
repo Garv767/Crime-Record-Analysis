@@ -19,11 +19,11 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <input 
           type="text" 
           placeholder="Search records, suspects, FIRs..." 
-          className="header-search-input"
+          className="header-search-input min-w-0"
         />
       </div>
 
-      <div className="header-actions">
+      <div className="header-actions hidden lg:flex">
         {/* Connectivity Status Badges */}
         <div className="connection-badges h-hidden md:flex">
           <div className="conn-badge">

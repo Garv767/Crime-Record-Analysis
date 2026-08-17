@@ -15,7 +15,7 @@ export default function SQLFooter({ query }: SQLFooterProps) {
           Core Engine Query // PostgreSQL
         </span>
       </div>
-      <div className="bg-bg-base/50 p-3 sm:p-6 border border-border-dim font-mono text-[10px] sm:text-[11px] text-dim leading-relaxed overflow-x-auto whitespace-pre max-w-full">
+      <div className="bg-bg-base/50 p-3 sm:p-6 border border-border-dim font-mono text-[10px] sm:text-[11px] text-dim leading-relaxed overflow-x-auto whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal max-w-full">
         {query}
       </div>
       <div className="mt-4 text-[10px] text-dim/50 uppercase tracking-widest text-right">
