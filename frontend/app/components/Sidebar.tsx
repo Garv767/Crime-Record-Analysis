@@ -11,7 +11,6 @@ import {
   Users,
   MapPin,
   FileText,
-  X,
 } from "lucide-react";
 
 // Navigation entries — each maps to a route in the app
@@ -48,16 +47,6 @@ export default function Sidebar({
       )}
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-        {/* System identity */}
-        <div className="sidebar-logo flex items-center justify-between">
-          <div>
-            <div className="sidebar-logo-title">CRPA//SYS</div>
-            <div className="sidebar-logo-sub">Crime Intelligence v1.0</div>
-          </div>
-          <button className="lg:hidden text-dim" onClick={() => setIsOpen(false)}>
-            <X size={18} />
-          </button>
-        </div>
 
       {/* Navigation links */}
       <nav className="sidebar-nav overflow-y-auto">
@@ -81,11 +70,6 @@ export default function Sidebar({
       </nav>
 
       {/* Version & DB indicator */}
-      <div className="sidebar-footer">
-        API → localhost:8080
-        <br />
-        DB → Supabase / PostgreSQL
-      </div>
       </aside>
     </>
   );

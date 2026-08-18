@@ -1,5 +1,4 @@
-import { Search, User, Database, Globe, Menu } from "lucide-react";
-import { useState } from "react";
+import { Search, Menu } from "lucide-react";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
@@ -24,17 +23,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </div>
 
       <div className="header-actions hidden lg:flex">
-        {/* Connectivity Status Badges */}
-        <div className="connection-badges h-hidden md:flex">
-          <div className="conn-badge">
-            <Globe size={11} className="text-secondary" />
-            <span>API: localhost:8080 (serverless function)</span>
-          </div>
-          <div className="conn-badge">
-            <Database size={11} className="text-secondary" />
-            <span>DB: Supabase/PG</span>
-          </div>
-        </div>
+
 
       </div>
     </header>
